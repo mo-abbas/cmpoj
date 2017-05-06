@@ -68,8 +68,7 @@ $categories = get_all_categories_in_problem($id);
          <span class="divName">
             <?php echo $problem["title"]; ?>
          </span>
-         <div class="divTopBar">  
-            <a href="Submit.php?problem=<?php echo $problem["id"]; ?>">Submit</a> | <a href="add_tutorial.php?problem=<?php echo $problem["id"]; ?>">add tutorial</a> | <a href="view_tutorial.php?problem=<?php echo $problem["id"]; ?>">View tutorials </a> | <a href="edit_tutorial.php?problem=<?php echo $problem["id"]; ?>"> edit tutorial </a>| <a href="problems_stat.php?problem=<?php echo $problem["id"]; ?>">View Statistics</a> 
+         <div class="divTopBar">
             <?php 
             if ($is_judge)
             	echo " | <a href=\"edit_problem.php?problem={$id}\">edit problem </a> ";

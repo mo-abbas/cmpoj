@@ -192,8 +192,8 @@
 		<div id="leftPan">
 			<ul>
 			<li><a href="Contests.php">Contests</a></li>
-			<li><?php echo "<a href =\"rank.php\">Top Coders</a> "?></li>
-			<li><?php echo "<a href =\"Teams_rank.php\">Top Teams</a> "?></li>
+			<li><a href ="rank.php">Top Coders</a></li>
+			<li><a href ="Teams_rank.php">Top Teams</a></li>
 			<?php
 			if(logged_in()) { ?>
 				<li><a href="Profile.php">Profile</a></li>
@@ -206,16 +206,6 @@
 				?>
 				<li><a href="mySubmissions.php?id=<?php echo $_SESSION["id"]?>">My Submissions</a></li>
 				<li><a href="MyContests.php">My Contests</a></li>
-
-			<?php 
-			}
-			if (admin_logged_in())
-			{
-			echo "
-			<li><a href=\"PendingContests.php\">Pending Contests</a></li>
-			<li><a href=\"AddAdmin.php\">Add Admin</a></li>
-			";
-			}
-			?>
+			<?php } ?>
 			</ul>
 		</div>

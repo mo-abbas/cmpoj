@@ -14,9 +14,6 @@
 	if(logged_in())
 		$judge = $_SESSION["id"] == $contest["judge_id"];
 
-	if($contest["approved"] == "" && !$judge)
-		redirect_to("index.php");
-
 	$contestant = null;
 
 	if(logged_in())
@@ -40,20 +37,14 @@
 		echo "<a href=\"Standings.php?contest={$contest["id"]}\">Standings</a>&nbsp";
 		echo "<a href=\"submissions.php?contest={$contest["id"]}\">Submissions</a>&nbsp";
 		echo "<a href=\"Contest_stat.php?problem={$contest["id"]}\">Statistics</a>&nbsp";
-		
-		if($contestant)
-			echo "<a href=\"ask_question.php?contest={$contest["id"]}\">Ask Question</a>&nbsp";
 
-		if($contestant || $judge)
-			echo "<a href=\"Questions.php?contest={$contest["id"]}\">Questions</a>&nbsp";
-		else if(logged_in())
+		if(logged_in())
 			echo "<a href=\"join_contest.php?contest={$contest["id"]}\">Join Contest</a>&nbsp";
 
 		if($judge)
 		{
 			echo "&nbsp;|&nbsp;&nbsp;";
 			echo "<a href=\"insert_prob.php?contest={$contest["id"]}\">Add problem</a>&nbsp";
-			echo "<a href=\"add_announce.php?contest={$contest["id"]}\">Add announcement</a>&nbsp";
 			echo "<a href=\"edit_contest.php?contest={$contest["id"]}\">Edit Contest</a>&nbsp";	
 		}
 
@@ -81,25 +72,6 @@
 
 			<?php
 			}
-		}
-		$announcements = get_all_announcements_in_contest($contest["id"]);
-		if(!empty($announcements))
-		{
-			$first = true;
-			echo "<br /><h2>Announcements</h2>" . "<div class=\"itemDiv\">";
-			foreach ($announcements as $announce) 
-			{ 
-				if(!$first)
-					echo "<hr />";
-				$first = false; ?>
-
-				
-				<p class="announce">
-					<?php echo htmlentities($announce["text"]); ?>
-				</p>
-			
-		<?php 
-			} 
 		}?>
 		</div>
 </div>

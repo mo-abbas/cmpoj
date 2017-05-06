@@ -54,6 +54,7 @@ if(empty($errors))
 	$query .= " '{$name}', '{$start}', '{$end}', {$type}, {$judge}";
 	$query .= ")";
 
+	echo $query;
 	$result = mysqli_query($connection, $query);
 	confirm_query($result);
 

@@ -191,60 +191,6 @@
 		}	
 	}
 
-	function compute_contest_rating($contest_id)
-	{
-		global $connection;
-		
-		$safe_contest_id = mysql_prep($contest_id);
-
-		$query  = "SELECT AVG(rating) AS rating ";
-		$query .= "FROM contest_rating ";
-		$query .= "WHERE contest_id={$safe_contest_id}";
-  
-  		$result = mysqli_query($connection, $query);
-		confirm_query($result);
-
-		$rating = mysqli_fetch_assoc($result);
-		return $rating;
-	}
-
-	function compute_tutorial_rating($tutorial)
-	{
-		global $connection;
-		
-		$safe_tutorial_id = mysql_prep($tutorial);
-
-		$query  = "SELECT AVG(rating) AS rating ";
-		$query .= "FROM tutorial_rating ";
-		$query .= "WHERE tutorial_id={$safe_tutorial_id}";
-  
-  		$result = mysqli_query($connection, $query);
-		confirm_query($result);
-
-		$rating = mysqli_fetch_assoc($result);
-		return $rating;
-
-	}
-
-	function find_tutorial_in_problem_by_account($problem_id, $account_id)
-	{
-		global $connection;
-		
-		$problem_id = mysql_prep($problem_id);
-		$account_id = mysql_prep($account_id);
-
-		$query  = "SELECT * ";
-		$query .= "FROM tutorial ";
-		$query .= "WHERE problem_id={$problem_id} AND account_id = {$account_id} ";
-		$query .= "LIMIT 1 ";
-  
-  		$result = mysqli_query($connection, $query);
-		confirm_query($result);
-
-		$tutorial = mysqli_fetch_assoc($result);
-		return $tutorial;
-	}
-
 	function find_contest_by_id($id)
 	{
 		global $connection;
@@ -268,31 +214,7 @@
 			return null;
 		}
 	}
-
-	function find_question_by_id($id)
-	{
-		global $connection;
-
-		$id = mysql_prep($id);
-
-		$query  = "SELECT * ";
-		$query .= "FROM question ";
-		$query .= "WHERE id = {$id} ";
-		$query .= "LIMIT 1";
-
-		$result = mysqli_query($connection, $query);
-		confirm_query($result);
-
-		if($question = mysqli_fetch_assoc($result))
-		{
-			return $question;
-		}
-		else
-		{
-			return null;
-		}		
-	}
-
+	
 	function find_problem_by_id($id)
 	{
 		global $connection;
@@ -418,46 +340,6 @@
 		}		
 	}
 
-	function get_all_questions_in_contest($contest_id, $NotAnswered = false)
-	{
-		global $connection;
-
-		$contest_id = mysql_prep($contest_id);
-
-		$query  = "SELECT question.*, contestant.handle ";
-		$query .= "FROM question ";
-		$query .= "JOIN contestant ";
-		$query .= "ON question.contestant_id = contestant.id ";
-		$query .= "WHERE question.contest_id = {$contest_id} ";
-		if($NotAnswered)
-			$query .= "AND answer IS NULL ";
-
-		$result = mysqli_query($connection, $query);	
-		confirm_query($result);
-
-		return query_result_to_array($result);		
-	}
-
-	function get_all_questions_by_contestant_in_contest($contestant_id, $contest_id)
-	{
-		global $connection;
-
-		$contest_id = mysql_prep($contest_id);
-		$contestant_id = mysql_prep($contestant_id);
-
-		$query  = "SELECT question.*, contestant.handle ";
-		$query .= "FROM question ";
-		$query .= "JOIN contestant ";
-		$query .= "ON question.contestant_id = contestant.id ";
-		$query .= "WHERE question.contest_id = {$contest_id} ";
-		$query .= "AND question.contestant_id = {$contestant_id} ";
-
-		$result = mysqli_query($connection, $query);	
-		confirm_query($result);
-
-		return query_result_to_array($result);		
-	}
-
 	function get_all_contestants()
 	{
 		global $connection;
@@ -572,22 +454,6 @@
 		confirm_query($result);
 
 		return query_result_to_array($result);	
-	}
-
-	function get_all_announcements_in_contest($contest_id)
-	{
-		global $connection;
-
-		$id = mysql_prep($contest_id);
-
-		$query  = "SELECT * ";
-		$query .= "FROM announcement ";
-		$query .= "WHERE contest_id = {$id}";
-
-		$result = mysqli_query($connection, $query);
-		confirm_query($result);
-
-		return query_result_to_array($result);		
 	}
 	
 	function get_all_samples_in_problem($id)
@@ -746,7 +612,6 @@
 
 	function logged_in()
 	{
-		//if (admin_logged_in()) return true;
 		if(isset($_SESSION["id"]))
 			return true;
 		else
@@ -759,38 +624,6 @@
 			redirect_to("login.php");
 	}
 	
-	function admin_logged_in()
-	{
-		if(isset($_SESSION["adid"]))
-			return true;
-		else
-			return false;
-	}
-	
-	function admin_login($aduser, $adpass)
-	{
-		global $connection;
-
-		$adid = mysql_prep($aduser);
-
-		$query  = "SELECT * ";
-		$query .= "FROM admin ";
-		$query .= "WHERE username='{$adid}' ";
-		$query .= "LIMIT 1";
-		$result = mysqli_query($connection, $query);
-		confirm_query($result);
-
-		$admin = mysqli_fetch_assoc($result);
-
-		if ($admin && password_check($adpass, $admin["password"]))
-		{
-			unset($_SESSION["adid"]);
-			return $admin;
-		}
-
-		return false;
-		
-	}
 	//____________________________ADDED_________________________
 	// function get_problem_by_category($category)
 	// {
