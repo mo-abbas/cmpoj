@@ -4,7 +4,7 @@
 		header("Location: " . $new_location);
 		exit;
 	}
-	
+
 	function mysql_prep($string)
 	{
 		global $connection;
@@ -35,7 +35,7 @@
 		}
 		return $output;
 	}
-	
+
 	function form_errors($errors=array()) {
 		$output = "";
 		if (!empty($errors)) {
@@ -62,18 +62,18 @@
 		$query .= "FROM team ";
 		$query .= "WHERE id = {$id} ";
 		$query .= "LIMIT 1";
-		
+
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
-		if ($team = mysqli_fetch_assoc($result)) 
+		if ($team = mysqli_fetch_assoc($result))
 		{
 			return $team;
 		}
-		else 
+		else
 		{
 			return null;
-		}	
+		}
 	}
 
 	function find_contestant_by_handle($handle)
@@ -89,14 +89,14 @@
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
-		if ($contestant = mysqli_fetch_assoc($result)) 
+		if ($contestant = mysqli_fetch_assoc($result))
 		{
 			return $contestant;
 		}
-		else 
+		else
 		{
 			return null;
-		}	
+		}
 	}
 
 	function find_contestant_by_id($id)
@@ -112,16 +112,16 @@
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
-		if ($contestant = mysqli_fetch_assoc($result)) 
+		if ($contestant = mysqli_fetch_assoc($result))
 		{
 			return $contestant;
 		}
-		else 
+		else
 		{
 			return null;
-		}	
+		}
 	}
-	
+
 	function find_account_by_handle($handle)
 	{
 		global $connection;
@@ -135,14 +135,14 @@
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
-		if ($account = mysqli_fetch_assoc($result)) 
+		if ($account = mysqli_fetch_assoc($result))
 		{
 			return $account;
 		}
-		else 
+		else
 		{
 			return null;
-		}	
+		}
 	}
 
 	function find_account_by_email($email)
@@ -151,24 +151,24 @@
 
 		$safe_email = mysql_prep($email);
 
-		$query  = "SELECT email, account.id ";
+		$query  = "SELECT * ";
 		$query .= "FROM account ";
 		$query .= "WHERE email = '{$safe_email}' ";
 		$query .= "LIMIT 1";
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
-		if ($account = mysqli_fetch_assoc($result)) 
+		if ($account = mysqli_fetch_assoc($result))
 		{
 			return $account;
 		}
-		else 
+		else
 		{
 			return null;
-		}	
+		}
 	}
 
-	function find_account_by_id($id)
+	/*function find_account_by_id($id)
 	{
 		global $connection;
 
@@ -181,16 +181,16 @@
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
-		if ($account = mysqli_fetch_assoc($result)) 
+		if ($account = mysqli_fetch_assoc($result))
 		{
 			return $account;
 		}
-		else 
+		else
 		{
 			return null;
-		}	
+		}
 	}
-
+*/
 	function find_contest_by_id($id)
 	{
 		global $connection;
@@ -214,7 +214,7 @@
 			return null;
 		}
 	}
-	
+
 	function find_problem_by_id($id)
 	{
 		global $connection;
@@ -236,7 +236,7 @@
 		else
 		{
 			return null;
-		}		
+		}
 	}
 
 	function find_submission_by_id($id)
@@ -260,7 +260,7 @@
 		else
 		{
 			return null;
-		}		
+		}
 	}
 
 	function find_compiler_by_id($id)
@@ -284,7 +284,7 @@
 		else
 		{
 			return null;
-		}		
+		}
 	}
 
 	function find_compiler_by_code($code)
@@ -308,7 +308,7 @@
 		else
 		{
 			return null;
-		}		
+		}
 	}
 
 	function find_contestant_in_contest($contestant_id, $contest_id)
@@ -337,7 +337,7 @@
 		else
 		{
 			return null;
-		}		
+		}
 	}
 
 	function get_all_contestants()
@@ -347,11 +347,12 @@
 		$query  = "SELECT * ";
 		$query .= "FROM contestant ";
 
-		$result = mysqli_query($connection, $query);	
+		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
-		return query_result_to_array($result);		
+		return query_result_to_array($result);
 	}
+
 	function get_all_compilers()
 	{
 		global $connection;
@@ -382,7 +383,7 @@
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
-		return query_result_to_array($result);	
+		return query_result_to_array($result);
 	}
 	function get_standings_in_contest($contest_id)
 	{
@@ -403,7 +404,7 @@
 
 		$contestants = query_result_to_array($result);
 		$temp = array();
-		foreach ($contestants as $contestant) 
+		foreach ($contestants as $contestant)
 		{
 			$temp[$contestant["id"]]=$contestant;
 			$temp[$contestant["id"]]["problems"] = array();
@@ -424,14 +425,14 @@
 
 		$contestant_problem_stats = query_result_to_array($result);
 
-		foreach ($contestant_problem_stats as $problem) 
+		foreach ($contestant_problem_stats as $problem)
 		{
 			$contestants[$problem["contestant_id"]]["problems"][$problem["problem_id"]] = $problem;
 		}
 
 		$standings = array();
 
-		foreach ($contestants as $contestant) 
+		foreach ($contestants as $contestant)
 		{
 			$standings[] = $contestant;
 		}
@@ -453,9 +454,9 @@
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
-		return query_result_to_array($result);	
+		return query_result_to_array($result);
 	}
-	
+
 	function get_all_samples_in_problem($id)
 	{
 		global $connection;
@@ -501,26 +502,26 @@
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
-		return query_result_to_array($result);	
+		return query_result_to_array($result);
 
 	}
 
 	function get_problem_by_category($category)
 	{
 		global $connection;
-		
+
 		$category = mysql_prep($category);
-		
+
 		$query ="SELECT title,id,level ";
 		$query .="FROM problem_category , problem ";
 		$query .=" WHERE problem_id=id AND category = '{$category}';";
 
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
- 
+
 		return query_result_to_array($result);
 	}
-	
+
 	//pending here is to get the submissions that aren't judged yet.
 	function get_all_submissions_in_contest($id)
 	{
@@ -543,10 +544,10 @@
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
-		return query_result_to_array($result);	
+		return query_result_to_array($result);
 	}
 
-	function get_all_submissions_in_problem($id, $pending = false)
+	function get_all_submissions_in_problem($id)
 	{
 		global $connection;
 
@@ -560,15 +561,13 @@
 		$query .= "ON C.id = S.contestant_id ";
 		$query .= "WHERE S.problem_id = {$id} ";
 		$query .= "ORDER BY S.time ";
-		if($pending)
-			$query .= ", S.status ";
 
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
-		return query_result_to_array($result);	
+		return query_result_to_array($result);
 	}
-	function password_encrypt($password) 
+	function password_encrypt($password)
 	{
 		$hash_format = "$2y$10$";   // Tells PHP to use Blowfish with a "cost" of 10
 		$salt_length = 22; 					// Blowfish salts should be 22-characters or more
@@ -578,15 +577,15 @@
 		return $hash;
 	}
 
-	function generate_salt($length) 
+	function generate_salt($length)
 	{
 		// Not 100% unique, not 100% random, but good enough for a salt
 		// MD5 returns 32 characters
 		$unique_random_string = md5(uniqid(mt_rand(), true));
-		
+
 		// Valid characters for a salt are [a-zA-Z0-9./]
 		$base64_string = base64_encode($unique_random_string);
-		
+
 		// But not '+' which is valid in base64 encoding
 		$modified_base64_string = str_replace('+', '.', $base64_string);
 
@@ -595,16 +594,16 @@
 
 		return $salt;
 	}
-		
-	function password_check($password, $existing_hash) 
+
+	function password_check($password, $existing_hash)
 	{
 		// existing hash contains format and salt at start
 		$hash = crypt($password, $existing_hash);
-		if ($hash === $existing_hash) 
+		if ($hash === $existing_hash)
 		{
 			return true;
 		}
-		else 
+		else
 		{
 			return false;
 		}
@@ -623,21 +622,21 @@
 		if(!logged_in())
 			redirect_to("login.php");
 	}
-	
+
 	//____________________________ADDED_________________________
 	// function get_problem_by_category($category)
 	// {
 		// global $connection;
-		
+
 		// $category = mysql_prep($category);
-		
+
 		// $query ="SELECT title,id,level ";
 		// $query .="FROM problem_category  ,problem ";
 		// $query .=" WHERE problem_id=id AND category = "."'{$category}';";
 
 		// $result = mysqli_query($connection, $query);
 		// confirm_query($result);
- 
+
 		// return query_result_to_array($result);
 	// }
 	function get_solved_problem_by_id($id)
@@ -649,55 +648,59 @@
 		$query .="JOIN problem AS P ";
 		$query .=" ON S.problem_id = P.id ";
 		$query .="WHERE S.contestant_id = {$id} AND S.ac_time<>'1000-01-01 00:00:00';";
-		
+
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
- 
+
 		return query_result_to_array($result);
 	}
 	function get_team_handle_by_account_id($id)
 	{
 		global $connection;
 		$category = mysql_prep($id);
-		
+
 		$query = "SELECT handle,team_id ";
 		$query .= "FROM contestant c, account a ";
 		$query .= "WHERE a.id={$id} AND c.id=a.team_id ;";
-		
+
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 		$team_id=mysqli_fetch_assoc($result);
 		return $team_id;
 	}
-	
+
 	function get_teams_member($id)
 	{
 		global $connection;
 		$category = mysql_prep($id);
-		
+
 		$query = "SELECT c.handle ,a.id ";
 		$query .= "FROM contestant c, account a ";
 		$query .= "WHERE  a.team_id ={$id}  AND a.id =c.id ;";
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
- 
-		return query_result_to_array($result);
+
+		$team = query_result_to_array($result);
+		return $team ? $team : null;
 	}
-	function get_handle($id)
+	function get_team_handle($id)
 	{
 		global $connection;
 		$category = mysql_prep($id);
-		
+
 		$query = "SELECT c.handle ";
 		$query .= "FROM team t ,contestant c ";
 		$query .= "WHERE  t.id ={$id} AND c.id=t.id  ;";
-		
+
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 		$team_handle=mysqli_fetch_assoc($result);
-		return $team_handle;
+		if($team_handle)
+			return $team_handle["handle"];
+
+		return null;
 	}
-	
+
 	function get_contestant_rating()
 	{
 		global $connection;
@@ -705,11 +708,11 @@
 		$query .= "FROM account a,contestant c,contestant_joins j ";
 		$query .= "where a.id=c.id AND a.id=j.contestant_id ";
 		$query .= "GROUP BY a.id ORDER BY Score DESC, c.handle LIMIT 20; ";
-	
+
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
- 
-		return query_result_to_array($result);	
+
+		return query_result_to_array($result);
 	}
 	function get_team_rating()
 	{
@@ -718,57 +721,57 @@
 		$query .= "FROM account a,contestant c,team t ,contestant_joins j	";
 		$query .= "where t.id=c.id AND t.id=j.contestant_id ";
 		$query .= "GROUP BY t.id ORDER BY score DESC, c.handle LIMIT 20; ";
-	
+
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
- 
-		return query_result_to_array($result);	
+
+		return query_result_to_array($result);
 	}
-	
+
 	function get_status_submissions($id ,$status)
 	{
 		global $connection;
 		$category = mysql_prep($id);
-		
+
 		$query = "SELECT * ";
 		$query .= "FROM submission ";
 		$query .= " WHERE problem_id={$id}   AND status ="."'{$status}';";
 		$result = mysqli_query($connection, $query);
 
 		confirm_query($result);
-		
+
 		return query_result_to_array($result);
 	}
 	function get_stat_problem_in_contest($id,$status)
 	{
-			
+
 		global $connection;
 		$category = mysql_prep($id);
-		
+
 		$query = "SELECT * ";
 		$query .= "FROM  problem p JOIN submission s ON s.problem_id=p.id ";
 		$query .= " WHERE 	p.contest_id={$id} AND status ="."'{$status}';";
 		$result = mysqli_query($connection, $query);
-		
+
 		confirm_query($result);
-		
+
 		return query_result_to_array($result);
 	}
 
 	function get_categories_sloved_by_contestant($id)
 	{
-			
+
 		global $connection;
 		$category = mysql_prep($id);
-		
+
 		$query  = "select category, count(*) AS count  ";
 		$query .= " from  problem_category as p join solves as s on s.problem_id=p.problem_id   ";
 		$query .= " WHERE  s.contestant_id ={$id} AND s.ac_time <> '1000-01-01 00:00:00' ";
 		$query .= " GROUP BY category ; ";
 		$result = mysqli_query($connection, $query);
-		
+
 		confirm_query($result);
-		
+
 		return query_result_to_array($result);
 	}
 

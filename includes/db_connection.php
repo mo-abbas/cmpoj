@@ -8,8 +8,8 @@
 
   // Test if connection succeeded
   if(mysqli_connect_errno()) {
-    die("Database connection failed: " . 
-         mysqli_connect_error() . 
+    die("Database connection failed: " .
+         mysqli_connect_error() .
          " (" . mysqli_connect_errno() . ")"
     );
   }

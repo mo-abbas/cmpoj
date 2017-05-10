@@ -34,7 +34,7 @@ if(isset($_POST["submit"]))
 				$_SESSION["team_handle"] = find_team_by_id($account["team_id"]);
 			}
 
-			if($_POST["remember"] == "on")
+			if(isset($_POST["remember"]) && $_POST["remember"] == "on")
 				setcookie(session_name(), $_COOKIE[session_name()], time() + 3600 * 24 * 30);
 			if(isset($_GET["dest"]))
 				redirect_to($_GET["dest"].".php");

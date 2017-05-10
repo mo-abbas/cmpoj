@@ -7,7 +7,7 @@
 	
 	$id=$_GET["id"];
 	
-	$team=get_handle($id);
+	$team=get_team_handle($id);
 	$members =get_teams_member($id);
 	$number =count($members);
 	if (!$members)

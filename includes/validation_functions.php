@@ -6,28 +6,35 @@ $errors = array();
 // use trim() so empty spaces don't count
 // use === to avoid false positives
 // empty() would consider "0" to be empty
-function has_presence($value) 
+function has_presence($value)
 {
 	return isset($value) && $value !== "";
 }
 
-function validate_presences($required_fields) 
+function validate_presences($required_fields)
 {
 	global $errors;
 	// Expects an assoc. array
-	foreach($required_fields as $field) 
+	foreach($required_fields as $field)
 	{
+		if (!isset($_POST[$field]))
+		{
+				$errors[$field] = fieldname_as_text($field) . " can't be blank";
+				continue;
+		}
+
 		if(is_array($_POST[$field]))
 		{
 			if(empty($_POST[$field]))
 				$errors[$field] = fieldname_as_text($field) . " can't be blank";
 			continue;
 		}
+
 		$value = trim($_POST[$field]);
-	 	if (!has_presence($value)) 
-	 	{
-	    		$errors[$field] = fieldname_as_text($field) . " can't be blank";
-	  	}
+		if (!has_presence($value))
+		{
+				$errors[$field] = fieldname_as_text($field) . " can't be blank";
+		}
 	}
 }
 
@@ -35,13 +42,19 @@ function validate_arrays($fields)
 {
 	global $errors;
 
-	foreach ($fields as $field) 
+	foreach ($fields as $field)
 	{
+		if(!isset($_POST[$field]))
+		{
+			$errors[$field] = fieldname_as_text($field) . " can't be blank";
+			continue;
+		}
+
 		if(empty($_POST[$field]))
 			$errors[$field] = fieldname_as_text($field) . " can't be blank";
 
 		$found = false;
-		foreach ($_POST[$field] as $element) 
+		foreach ($_POST[$field] as $element)
 		{
 			if(trim($element) != "")
 				$found = true;
@@ -53,19 +66,19 @@ function validate_arrays($fields)
 
 // * string length
 // max length
-function has_max_length($value, $max) 
+function has_max_length($value, $max)
 {
 	return strlen($value) <= $max;
 }
 
-function validate_max_lengths($fields_with_max_lengths) 
+function validate_max_lengths($fields_with_max_lengths)
 {
 	global $errors;
 	// Expects an assoc. array
-	foreach($fields_with_max_lengths as $field => $max) 
+	foreach($fields_with_max_lengths as $field => $max)
 	{
 		$value = trim($_POST[$field]);
-	  if (!has_max_length($value, $max) && !isset($errors[$field])) 
+	  if (!has_max_length($value, $max) && !isset($errors[$field]))
 	  {
 	    $errors[$field] = fieldname_as_text($field) . " is too long";
 	  }
@@ -77,14 +90,14 @@ function has_min_length($value, $min)
 	return strlen($value) >= $min;
 }
 
-function validate_min_lengths($fields_with_min_lengths) 
+function validate_min_lengths($fields_with_min_lengths)
 {
 	global $errors;
-	
-	foreach($fields_with_min_lengths as $field => $min) 
+
+	foreach($fields_with_min_lengths as $field => $min)
 	{
 		$value = trim($_POST[$field]);
-	  if (!has_min_length($value, $min) && !isset($errors[$field])) 
+	  if (!has_min_length($value, $min) && !isset($errors[$field]))
 	  {
 	    $errors[$field] = fieldname_as_text($field) . " is too short";
 	  }
@@ -104,12 +117,14 @@ function is_a_number($string)
 	return is_numeric($string);
 }
 
-function validate_numbers($fields_with_numbers) 
+function validate_numbers($fields_with_numbers)
 {
-	foreach ($fields_with_numbers as $field) 
+	global $errors;
+
+	foreach ($fields_with_numbers as $field)
 	{
 		$value = trim($_POST[$field]);
-		if(!is_a_number($field))
+		if(!is_a_number($_POST[$field]))
 			$errors[$field] = fieldname_as_text($field) . " should have a number";
 	}
 }
@@ -129,7 +144,7 @@ function validate_email($email)
 {
 	global $errors;
 
-	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
+	if (!filter_var($email, FILTER_VALIDATE_EMAIL))
 	{
   		$errors["email"] = "Email is invalid.";
   	}
