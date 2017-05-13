@@ -2,27 +2,52 @@
 	include("Base.php");
 	require_once("includes/db_connection.php");
 
-	if(!isset($_GET["contest"]) || !is_numeric($_GET["contest"]))
-		redirect_to("index.php");
-
-	$contest = find_contest_by_id((int)$_GET["contest"]);
-
-	if(!$contest)
-		redirect_to("index.php");
-
-	$judge = false;
-	if(logged_in())
-		$judge = $_SESSION["id"] == $contest["judge_id"];
-
-	if(strtotime($contest["start_time"]) > time() && !$judge)
+	function output()
 	{
-		$_SESSION["message"] = "The contest didn't start yet.";
-		redirect_to("ContestProblems.php?contest=" . $contest["id"]);
+		$output = [];
+		if(!isset($_GET["contest"]) || !is_numeric($_GET["contest"]))
+		{
+			$output["redirect"] = "index.php";
+			return $output;
+		}
+
+		$contest = find_contest_by_id((int)$_GET["contest"]);
+
+		if(!$contest)
+		{
+			$output["redirect"] = "index.php";
+			return $output;
+		}
+
+		$judge = false;
+		if(logged_in())
+			$judge = $_SESSION["id"] == $contest["judge_id"];
+
+		if(strtotime($contest["start_time"]) > time() && !$judge)
+		{
+			$_SESSION["message"] = "The contest didn't start yet.";
+			$output["redirect"] = "ContestProblems.php?contest=" . $contest["id"];
+			return $output;
+		}
+
+		$problems = get_all_problems_in_contest($contest["id"]);
+		$standings = get_standings_in_contest($contest["id"]);
+
+		$output["judge"] = $judge;
+		$output["contest"] = $contest;
+		$output["problems"] = $problems;
+		$output["standings"] = $standings;
+
+		return $output;
 	}
 
-	
-	$problems = get_all_problems_in_contest($contest["id"]);
-	$standings = get_standings_in_contest($contest["id"]);
+	$output = output();
+	if(isset($output["redirect"]))
+		redirect_to($output["redirect"]);
+	else {
+		$contest = $output["contest"];
+		$problems = $output["problems"];
+		$standings = $output["standings"];
 ?>
 
 <style type="text/css">
@@ -56,9 +81,6 @@
 		$error = errors();
 		echo form_errors($error);
 		echo message();
-		$query = "SELECT * from submission ";
-		$result = mysqli_query($connection, $query);
-		confirm_query($result);
 	?>
 	<div class="form">
 		<table>
@@ -66,9 +88,9 @@
 				<th>Rank</th>
 				<th>Handle</th>
 				<th>Penalty</th>
-				<?php 
+				<?php
 					$problem_number = 1;
-					foreach ($problems as $problem) 
+					foreach ($problems as $problem)
 					{
 						echo "<th><a href=\"Problems.php?problem={$problem["id"]}\">{$problem_number}</a></th>";
 						$problem_number++;
@@ -76,13 +98,13 @@
 				?>
 			</tr>
 			<?php
-				for ($i=$start; $i < $end; $i++) 
-				{ 
+				for ($i=0; $i < count($standings); $i++)
+				{
 					echo "<tr>";
 					echo "<td>" . ($i+1) . "</td>";
 					echo "<td>{$standings[$i]["handle"]}</td>";
 					echo "<td>{$standings[$i]["score"]}</td>";
-					foreach ($problems as $problem) 
+					foreach ($problems as $problem)
 					{
 						echo "<td>";
 						if(array_key_exists($problem["id"], $standings[$i]["problems"]))
@@ -110,7 +132,4 @@
 
 	</div>
 </div>
-<?php include("Footer.php") ?>
-
-
-
+<?php include("Footer.php"); }?>

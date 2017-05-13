@@ -1,27 +1,38 @@
-<?php 
-	include("Base.php"); 
+<?php
+	include("Base.php");
 	require_once("includes/db_connection.php");
 	require_once("includes/functions.php");
-	
-	if (isset($_GET["getByCategory"]))
+
+	function output()
 	{
-		$category=$_GET["Searchprob"];
-		$category = trim($category);
-		$problems =get_problem_by_category($category);
+		$output = [];
+
+		if (isset($_GET["getByCategory"]))
+		{
+			$category=$_GET["Searchprob"];
+			$category = trim($category);
+			$problems =get_problem_by_category($category);
+			$output["problems"] = $problems;
+		}
+		else if(isset($_GET["getByLevel"]))
+		{
+			$level=$_GET["Searchprob"];
+			$level = trim($level);
+			$problems = get_problem_by_level((int)$level);
+			$output["problems"] = $problems;
+		}
+		else
+		{
+			$output["redirect"] = "index.php";
+		}
+
+		return $output;
 	}
-	else if(isset($_GET["getByLevel"]))
-	{
-		$level=$_GET["Searchprob"];
-		$level = trim($level);
-		$problems = get_problem_by_level((int)$level);
-	}
-	else
-	{
-		redirect_to("index.php");
-	}
-	
-	
-	$number =count($problems);
+	$output = output();
+	if (isset($output["redirect"]))
+		redirect_to($output["redirect"]);
+	else {
+		$problems = $output["problems"];
 ?>
 
 <style type="text/css">
@@ -50,7 +61,7 @@
 		echo form_errors($error);
 		echo message();
 
-		if($number == 0)
+		if(count($problems) == 0)
 			echo "<h2>No results found</h2>";
 		else {
 	?>
@@ -64,14 +75,14 @@
 			<th>View</th>
 		</tr>
 	<?php
-		for ($i=0 ;$i<$number ;$i++)
+		foreach($problems as $problem)
 		{
-			
+
 			echo"<tr>";
-			echo "<td>{$problems[$i]["title"]}</td>";
-			echo "<td>{$problems[$i]["id"]}</td>";
-			echo "<td>{$problems[$i]["level"]}</td>";
-			echo "<td><a href=\"problems.php?problem={$problems[$i]["id"]}\">View</a></td>";
+			echo "<td>{$problem["title"]}</td>";
+			echo "<td>{$problem["id"]}</td>";
+			echo "<td>{$problem["level"]}</td>";
+			echo "<td><a href=\"problems.php?problem={$problem["id"]}\">View</a></td>";
 			echo"</tr>";
 		}
 	?>
@@ -81,4 +92,4 @@
 <?php } ?>
 
 </div>
-<?php include("Footer.php"); ?>
+<?php include("Footer.php"); }?>

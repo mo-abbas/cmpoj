@@ -2,23 +2,65 @@
 include("Base.php");
 require_once("includes/db_connection.php");
 
-if(!isset($_GET["problem"]))
+// didn't check for the problem existance
+// didn't check for start time
+
+function output()
+{
+	$output = [];
+
+	if(!isset($_GET["problem"]))
+	{
+		$output["redirect"] = "index.php";
+		return $output;
+	}
+
+	$id = $_GET["problem"];
+	$problem = find_problem_by_id($id);
+
+	if(!$problem)
+	{
+		$output["redirect"] = "index.php";
+		return $output;
+	}
+
+	$contest_id=$problem["contest_id"];
+	$contest = find_contest_by_id($contest_id);
+
+	$time = date("Y-m-d H:i:s");
+	if($contest["start_time"] > $time)
+	{
+		$output["redirect"] = "index.php";
+		return $output;
+	}
+
+	$judge_id=$contest["judge_id"];
+	$is_judge= logged_in() && $_SESSION["id"] == $judge_id;
+	$joinedContest = logged_in() && find_contestant_in_contest($_SESSION["id"], $contest["id"]) != null;
+
+	$samples 	= get_all_samples_in_problem($id);
+	$categories = get_all_categories_in_problem($id);
+
+	$output["problem"] = $problem;
+	$output["samples"] = $samples;
+	$output["is_judge"] = $is_judge;
+	$output["categories"] = $categories;
+	$output["joinedContest"] = $joinedContest;
+
+	return $output;
+}
+
+$output = output();
+if(isset($output["redirect"]))
 	redirect_to("index.php");
+else {
+	$problem = $output["problem"];
+	$samples = $output["samples"];
+	$is_judge = $output["is_judge"];
+	$categories = $output["categories"];
+	$joinedContest = $output["joinedContest"];
 
-$id = $_GET["problem"];
-$problem = find_problem_by_id($id);
-$contest_id=$problem["contest_id"];
-
-$contest = find_contest_by_id($contest_id);
-$judge_id=$contest["judge_id"];
-
-$is_judge= $_SESSION["id"]==$judge_id;
-
-if(!$problem)
-	redirect_to("index.php");
-
-$samples 	= get_all_samples_in_problem($id);
-$categories = get_all_categories_in_problem($id);
+	$id = $problem["id"];
 ?>
 <style>
 	.problem
@@ -61,23 +103,25 @@ $categories = get_all_categories_in_problem($id);
 <div id="rightPan">
 	<?php
 		$errors = errors();
-		echo form_errors($errors); 
-		echo message(); 
+		echo form_errors($errors);
+		echo message();
 	?>
    <div class="itemDiv">
          <span class="divName">
             <?php echo $problem["title"]; ?>
          </span>
          <div class="divTopBar">
-            <?php 
+            <?php
             if ($is_judge)
             	echo " | <a href=\"edit_problem.php?problem={$id}\">edit problem </a> ";
+						if ($joinedContest)
+							echo " | <a href=\"Submit.php?problem={$id}\">Submit </a> ";
             ?>
          </div>
-   </div>   
+   </div>
    <div class="problem">
    		<span>
-			Problem Categories: 
+			Problem Categories:
    		</span>
    		<?php
    			$count_categories=count($categories);
@@ -98,8 +142,8 @@ $categories = get_all_categories_in_problem($id);
 			echo nl2br(htmlentities($problem["text"]));
 			echo "</p>";
 
-			$idx = 1; 
-			foreach ($samples as $sample) 
+			$idx = 1;
+			foreach ($samples as $sample)
 			{
 				echo "<div class=\"sample\">";
 				echo "<h2>Case" . $idx++ . "</h2>";
@@ -107,10 +151,10 @@ $categories = get_all_categories_in_problem($id);
 				echo "<h3>Output:</h3>" . nl2br(htmlentities($sample["input"])) . "<br />";
 				echo "</div><br />";
 			}
-		?>		
+		?>
    </div>
 </div>
 
 <?php
-include("Footer.php");
+include("Footer.php"); }
 ?>

@@ -193,7 +193,6 @@
 			<ul>
 			<li><a href="Contests.php">Contests</a></li>
 			<li><a href ="rank.php">Top Coders</a></li>
-			<li><a href ="Teams_rank.php">Top Teams</a></li>
 			<?php
 			if(logged_in()) { ?>
 				<li><a href="Profile.php">Profile</a></li>

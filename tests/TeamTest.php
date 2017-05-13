@@ -5,7 +5,7 @@ require_once("../includes/validation_functions.php");
 require_once("../includes/functions.php");
 require_once("../includes/session.php");
 
-class AccountTest extends TestCase
+class TeamTest extends TestCase
 {
 	private static $connection = null;
 	public static function setUpBeforeClass()
@@ -35,6 +35,7 @@ class AccountTest extends TestCase
 
 	public function setUp()
 	{
+		$this->setOutputCallback(function() {});
 		mysqli_query(self::$connection, "BEGIN");
 	}
 
@@ -101,6 +102,24 @@ class AccountTest extends TestCase
 		$id = 35;
 		$handle = get_team_handle($id);
 		$this->assertNull($handle);
+	}
+
+	public function test_Team()
+	{
+		$GLOBALS['connection'] = self::$connection;
+		require_once("../Team.php");
+
+		$output = output();
+		$this->assertEquals("index.php", $output["redirect"]);
+
+		// team doesn't exist
+		$_GET["id"] = 1;
+		$output = output();
+		$this->assertEquals("index.php", $output["redirect"]);
+
+		$_GET["id"] = 37;
+		$output = output();
+		$this->assertEquals("Testers", $output["team"]);
 	}
 }
 ?>

@@ -2,6 +2,8 @@
 	include("Base.php");
 	require_once("includes/db_connection.php");
 
+// doesn't check on the join contest status.
+
 function output()
 {
 	$output = [];
@@ -21,8 +23,12 @@ function output()
 	}
 
 	$judge = false;
+	$joinedContest = false;
 	if(logged_in())
+	{
 		$judge = $_SESSION["id"] == $contest["judge_id"];
+		$joinedContest = find_contestant_in_contest($_SESSION["id"], $contest["id"]) != null;
+	}
 
 	$problems = get_all_problems_in_contest($contest["id"]);
 	$showContest = strtotime($contest["start_time"]) <= time() || $judge;
@@ -33,6 +39,7 @@ function output()
 	$output["problems"] = $problems;
 	$output["showContest"] = $showContest;
 	$output["showProblems"] = $showProblems;
+	$output["joinedContest"] = $joinedContest;
 
 	return $output;
 }
@@ -47,7 +54,7 @@ else
 	$problems = $output["problems"];
 	$showContest = $output["showContest"];
 	$showProblems = $output["showProblems"];
-
+	$joinedContest = $output["joinedContest"];
 ?>
 
 <div id="rightPan">
@@ -59,9 +66,9 @@ else
 
 		echo "<a href=\"Standings.php?contest={$contest["id"]}\">Standings</a>&nbsp";
 		echo "<a href=\"submissions.php?contest={$contest["id"]}\">Submissions</a>&nbsp";
-		echo "<a href=\"Contest_stat.php?problem={$contest["id"]}\">Statistics</a>&nbsp";
+		echo "<a href=\"Contest_stat.php?contest={$contest["id"]}\">Statistics</a>&nbsp";
 
-		if(logged_in())
+		if(!$joinedContest)
 			echo "<a href=\"join_contest.php?contest={$contest["id"]}\">Join Contest</a>&nbsp";
 
 		if($judge)

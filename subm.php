@@ -1,46 +1,75 @@
-<?php 
+<?php
 	include("Base.php");
 	require_once("includes/db_connection.php");
 
-	if(!isset($_GET["id"]) || !is_numeric($_GET["id"]))
-		redirect_to("index.php");
-
-	$submission = null;
-	if(!($submission = find_submission_by_id((int)$_GET["id"])))
-		redirect_to("index.php");
-
-	$contestant = find_contestant_by_id($submission["contestant_id"]);
-	$compiler = find_compiler_by_id($submission["compiler_id"]);
-	$problem = find_problem_by_id($submission["problem_id"]);
-	$contest = find_contest_by_id($problem["contest_id"]);
-	$judge = $contest["judge_id"];
-
-	if($submission["contestant_id"] != $_SESSION["id"] && $judge != $_SESSION["id"])
-		redirect_to("index.php");
-
-	if(isset($_POST["submit"]) && $submission["status"] == ' Pending')
+	function output()
 	{
-		$status = "";
-		switch ($_POST["status"]) {
-			case 'acc':
-				$status = "Accepted";
-				break;
-			case 'rte':
-				$status = "Runtime error";
-				break;
-			case 'tle':
-				$status = "Time limit exceeded";
-				break;
-			case 'ce':
-				$status = "Compile error";
-				break;
-			case 'wa':
-				$status = "Wrong answer";
-				break;
+		$output = [];
+		if(!isset($_GET["id"]) || !is_numeric($_GET["id"]))
+		{
+			$output["redirect"] = "index.php";
+			return $output;
+		}
 
-			default:
-				redirect_to("?id={$submission["id"]}");
-				break;
+		if(!logged_in())
+		{
+			$output["redirect"] = "index.php";
+			return $output;
+		}
+
+		$submission = find_submission_by_id((int)$_GET["id"]);
+		if(!$submission)
+		{
+			$output["redirect"] = "index.php";
+			return $output;
+		}
+
+		$contestant = find_contestant_by_id($submission["contestant_id"]);
+		$compiler = find_compiler_by_id($submission["compiler_id"]);
+		$problem = find_problem_by_id($submission["problem_id"]);
+		$contest = find_contest_by_id($problem["contest_id"]);
+		$judge = $contest["judge_id"];
+
+		if($submission["contestant_id"] != $_SESSION["id"] && $judge != $_SESSION["id"])
+		{
+			$output["redirect"] = "index.php";
+			return $output;
+		}
+
+		$allowJudge = $submission["status"] == ' Pending' && $_SESSION["id"] == $judge;
+
+		$output["submission"] = $submission;
+		$output["contestant"] = $contestant;
+		$output["allowJudge"] = $allowJudge;
+		$output["compiler"] = $compiler;
+		$output["problem"] = $problem;
+		$output["contest"] = $contest;
+		$output["judge"] = $judge;
+
+		return $output;
+	}
+
+	function post($submission)
+	{
+		global $connection;
+		
+		$output = [];
+		if(!isset($_POST["status"]))
+		{
+			return $output;
+		}
+
+		if($submission["status"] != ' Pending')
+		{
+			return $output;
+		}
+
+		$allowed = ["Accepted", "Runtime error", "Time limit exceeded", "Compile error", "Wrong answer"];
+		$status = $_POST["status"];
+		if(!in_array($status, $allowed))
+		{
+			$output["redirect"] = "?id={$submission["id"]}";
+			return $output;
 		}
 
 		$status = mysql_prep($status);
@@ -54,7 +83,29 @@
 
 		$_SESSION["message"] = "Verdict set successfully.";
 		$submission["status"] = $status;
+		$output["submission"] = $submission;
+
+		return $output;
 	}
+
+	$output = output();
+	if(isset($output["redirect"]))
+		redirect_to($output["redirect"]);
+	else {
+		$submission = $output["submission"];
+		$contestant = $output["contestant"];
+		$allowJudge = $output["allowJudge"];
+		$compiler = $output["compiler"];
+		$problem = $output["problem"];
+		$contest = $output["contest"];
+		$judge = $output["judge"];
+
+		$output = post($submission);
+		if(isset($output["redirect"]))
+			redirect_to($output["redirect"]);
+		else {
+			if(isset($output["submission"]))
+				$submission = $output["submission"];
 ?>
 
 <style type="text/css">
@@ -69,8 +120,8 @@
 }
 
 .submission_info {
-	font-size: 15px; 
-	font-weight: bold; 
+	font-size: 15px;
+	font-weight: bold;
 	text-align: left;
 }
 
@@ -97,15 +148,15 @@
 			<span>Compiler used: <?php echo htmlentities($compiler["name"] . ' ' . $compiler["version"]); ?> </span>
 			<br /><br />
 			<?php
-				if($submission["status"] == ' Pending' && logged_in() && $_SESSION["id"] == $judge)
+				if($allowJudge)
 				{ ?>
 					<form method="POST" action="">
 						<select name="status">
-							<option value="acc">Accepted</option>
-							<option value="wa">Wrong Answer</option>
-							<option value="rte">Runtime Error</option>
-							<option value="tle">Time Limit Exceeded</option>
-							<option value="ce">Compilation Error</option>
+							<option value="Accepted">Accepted</option>
+							<option value="Wrong answer">Wrong Answer</option>
+							<option value="Runtime error">Runtime Error</option>
+							<option value="Time limit exceeded">Time Limit Exceeded</option>
+							<option value="Compile error">Compilation Error</option>
 						</select>
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="submit" name="submit" value="Submit" />
@@ -119,4 +170,4 @@
 		<pre id="code_box" class="prettyprint" style="font-weight: default; "><?php echo htmlentities($submission["code"]); ?></pre>
 	</div>
 </div>
-<?php include("Footer.php"); ?>
+<?php include("Footer.php"); }}?>

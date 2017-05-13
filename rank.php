@@ -3,7 +3,7 @@
 	require_once("includes/db_connection.php");
 	$contestant = get_contestant_rating();
 	$number =count ($contestant);
-?> 	
+?>
 <style type="text/css">
 .form {
 	border-style: groove;
@@ -33,7 +33,7 @@
 			<th>Solved problems</th>
 			<th>View</th>
 			</tr>
-			<?php 
+			<?php
 				for ( $i=1 ; $i <= $number ; $i++)
 				{
 					echo "<tr>";
@@ -50,6 +50,6 @@
 </div>
 
 
-<?php 
+<?php
 include("Footer.php");
 ?>

@@ -2,35 +2,62 @@
 	include("Base.php");
 	require_once("includes/db_connection.php");
 
-	if(!isset($_GET["contest"]) || !is_numeric($_GET["contest"]))
-		redirect_to("index.php");
-
-	$contest = find_contest_by_id((int)$_GET["contest"]);
-
-	if(!$contest)
-		redirect_to("index.php");
-
-	$judge = false;
-	if(logged_in())
-		$judge = $_SESSION["id"] == $contest["judge_id"];
-
-	if(strtotime($contest["start_time"]) > time() && !$judge)
+	function output()
 	{
-		$_SESSION["message"] = "The contest didn't start yet.";
-		redirect_to("ContestProblems.php?contest=" . $contest["id"]);
-	}
+		$output = [];
+		if(!isset($_GET["contest"]) || !is_numeric($_GET["contest"]))
+		{
+			$output["redirect"] = "index.php";
+			return $output;
+		}
 
-	$submissions = null;
-	$problem = null;
+		$contest = find_contest_by_id((int)$_GET["contest"]);
+		if(!$contest)
+		{
+			$output["redirect"] = "index.php";
+			return $output;
+		}
 
-	if(isset($_GET["problem"]) && $problem = find_problem_by_id((int)$_GET["problem"]))
-	{
-		$submissions = get_all_submissions_in_problem($problem["id"]);
+		$judge = false;
+		if(logged_in())
+			$judge = $_SESSION["id"] == $contest["judge_id"];
+
+		if(strtotime($contest["start_time"]) > time() && !$judge)
+		{
+			$_SESSION["message"] = "The contest didn't start yet.";
+			$output["redirect"] = "ContestProblems.php?contest=" . $contest["id"];
+			return $output;
+		}
+
+		$submissions = null;
+		$problem = null;
+
+		if(isset($_GET["problem"]) && ($problem = find_problem_by_id((int)$_GET["problem"])) && $problem["contest_id"] == $contest["id"])
+		{
+			$submissions = get_all_submissions_in_problem($problem["id"]);
+		}
+		else
+		{
+			$submissions = get_all_submissions_in_contest($contest["id"]);
+		}
+
+		$contest["problems"] = get_all_problems_in_contest($contest["id"]);
+
+		$output["submissions"] = $submissions;
+		$output["problem"] = $problem;
+		$output["contest"] = $contest;
+		$output["judge"] = $judge;
+
+		return $output;
 	}
-	else
-	{
-		$submissions = get_all_submissions_in_contest($contest["id"]);	//true is used to get pending submissions only
-	}
+	$output = output();
+	if(isset($output["redirect"]))
+		redirect_to($output["redirect"]);
+	else {
+		$submissions = $output["submissions"];
+		$problem = $output["problem"];
+		$contest = $output["contest"];
+		$judge = $output["judge"];
 ?>
 
 <style type="text/css">
@@ -78,8 +105,7 @@
 	<select id="problem_select">
 		<option value="0">All Problems</option>
 		<?php
-			$problems = get_all_problems_in_contest($contest["id"]);
-			foreach ($problems as $prob) 
+			foreach ($contest["problems"] as $prob)
 			{
 				echo "<option value=\"{$prob["id"]}\">{$prob["title"]}</option>";
 			}
@@ -94,19 +120,19 @@
 				<th>Handle</th>
 				<th>Time</th>
 				<th>Status</th>
-				<?php 
+				<?php
 				if($judge)
 					echo "<th>Submission</th>";
 				?>
 			</tr>
 			<?php
-				for ($i=$start; $i < $end; $i++) 
-				{ 
+				for ($i=0; $i < count($submissions); $i++)
+				{
 					echo "<tr>";
 					if($problem)
 					{
 						$title = htmlentities($problem["title"]);
-						echo "<td><a href=\"Problems.php?problem={$problem["id"]}\">{$problem["title"]}</a></td>";	
+						echo "<td><a href=\"Problems.php?problem={$problem["id"]}\">{$problem["title"]}</a></td>";
 					}
 					else
 					{
@@ -126,7 +152,4 @@
 
 	</div>
 </div>
-<?php include("Footer.php") ?>
-
-
-
+<?php include("Footer.php"); }?>
