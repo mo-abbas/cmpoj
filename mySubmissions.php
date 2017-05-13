@@ -1,12 +1,52 @@
-<?php 
+<?php
 include("Base.php");
 require_once("includes/db_connection.php");
 require_once("includes/functions.php");
 
-if (!logged_in()||!isset($_SESSION["id"])||!isset($_GET["id"]))			//if not logged in or the session id does not exist or the account id does not exist
-	redirect_to("index.php");
+//didn't check if the contestant was not there
 
-$submissions=get_all_contestant_submissions($_GET["id"]);				//all submissions by contestant
+function output()
+{
+	$output = [];
+
+	if (!isset($_GET["id"]))			//if the account id does not exist
+	{
+		$output["redirect"] = "index.php";
+		return $output;
+	}
+
+	$contestant = find_contestant_by_id($_GET["id"]);
+	if (!$contestant)			//if the account id does not exist
+	{
+		$output["redirect"] = "index.php";
+		return $output;
+	}
+
+	$handle=$contestant["handle"];
+
+	// all submissions by contestant
+	$submissions=get_all_contestant_submissions($_GET["id"]);
+	$showCode = logged_in() && $_SESSION["id"] == $_GET["id"];
+	foreach ($submissions as &$submission) {
+		$submission["problem"] = find_problem_by_id($submission["problem_id"]);
+	}
+
+	unset($submission);
+
+	$output["submissions"] = $submissions;
+	$output["showCode"] = $showCode;
+	$output["handle"] = $handle;
+
+	return $output;
+}
+
+$output = output();
+if (isset($output["redirect"]))
+	redirect_to($output["redirect"]);
+else {
+	$submissions = $output["submissions"];
+	$handle = $output["handle"];
+	$showCode = $output["showCode"];
 ?>
 
 <style type="text/css">
@@ -27,13 +67,13 @@ $submissions=get_all_contestant_submissions($_GET["id"]);				//all submissions b
 	text-align: center;
 }
 </style>
-<div id="rightPan">	
+<div id="rightPan">
 	<h2>Submissions</h2>
 	<?php
 		$error = errors();
 		echo form_errors($error);
 		echo message();
-	?>		
+	?>
 	<br /><br />
 	<div class="form">
 		<?php
@@ -44,26 +84,25 @@ $submissions=get_all_contestant_submissions($_GET["id"]);				//all submissions b
 				<th>Problem name</th>
 				<th>Handle</th>
 				<th>Time</th>
-				<th>Status</th>							
-				<?php 
-				if(logged_in() && $submissions[0]["contestant_id"] == $_SESSION["id"])
+				<th>Status</th>
+				<?php
+				if($showCode)
 					echo "<th>Submission</th>";
 					?>
 			</tr>
 			<?php
-				$contestant=find_contestant_by_id($_GET["id"]);
-				$handle=$contestant["handle"];
-				foreach ($submissions as $problem) 
-				{ 
-					$problem_record=find_problem_by_id($problem["problem_id"]);												
-					echo "<tr>";					
-					$title = htmlentities($problem_record["title"]);
-					echo "<td><a href=\"Problems.php?problem={$problem_record["id"]}\">{$problem_record["title"]}</a></td>";																									
+
+				foreach ($submissions as $submission)
+				{
+					$problem = $submission["problem"];
+					echo "<tr>";
+					$title = htmlentities($problem["title"]);
+					echo "<td><a href=\"Problems.php?problem={$problem["id"]}\">{$title}</a></td>";
 					echo "<td>{$handle}</td>";
-					echo "<td>{$problem["time"]}</td>";
-					echo "<td>{$problem["status"]}</td>";	
-					if(logged_in() && $problem["contestant_id"] == $_SESSION["id"])
-						echo "<td><a href=\"subm.php?id={$problem["id"]}\">View Code</a></td>";
+					echo "<td>{$submission["time"]}</td>";
+					echo "<td>{$submission["status"]}</td>";
+					if($showCode)
+						echo "<td><a href=\"subm.php?id={$submission["id"]}\">View Code</a></td>";
 					echo "</tr>";
 				}
 			?>
@@ -74,4 +113,4 @@ $submissions=get_all_contestant_submissions($_GET["id"]);				//all submissions b
 		?>
 	</div>
 </div>
-<?php include("Footer.php") ?>
+<?php include("Footer.php"); }?>

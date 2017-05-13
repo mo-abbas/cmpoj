@@ -1,7 +1,9 @@
-<?php 
+<?php
 	include("Base.php");
 	require_once("includes/db_connection.php");
-	
+
+// graph shows ended contests only
+
 // if(!isset($_SESSION["id"]))
 	// redirect_to("Login.php?dest=Profile");
 // $id=$_SESSION["id"];
@@ -30,13 +32,13 @@ $contestant = find_account_by_handle($account["handle"]);
 $solved_problems=get_categories_sloved_by_contestant($id);
 $number =count($solved_problems);
 $team = get_team_handle_by_account_id($id);
-	
+
 $time = mysql_prep(date("Y-m-d H:i:s"));
 
 //statistics query
 $query = "SELECT name,contest_id, rank ";
 $query.= "FROM contestant_joins AS cj , contest AS c ";
-$query.= "WHERE c.id=cj.contest_id AND cj.contestant_id={$id} AND c.end_time < '{$time}' ";
+$query.= "WHERE c.id=cj.contest_id AND cj.contestant_id={$id} ";
 $query.= "GROUP BY contest_id;";
 
 $result=mysqli_query($connection,$query);
@@ -83,10 +85,10 @@ while ($row=mysqli_fetch_row($result))
 <h2><?php echo $contestant["first_name"] . ' ' . $contestant["last_name"] ?></h2>
 <h2>Handle: <?php echo $account["handle"] ?></h2>
 	<h2><?php echo "Team:" ?>
-	<?php 
+	<?php
 	if (!is_null($team["handle"]))
 			echo "<a href=\"Team.php?id={$team["team_id"]}\">{$team["handle"]}</a> ";
-	else 
+	else
 			echo "No Team.";
 	?>
 	<h3><a href="mySubmissions.php?id=<?php echo $id; ?>" >Submissions</a></h3>
@@ -95,7 +97,7 @@ while ($row=mysqli_fetch_row($result))
 	<?php
 		global $connection;
 		$query  = "SELECT contest_id FROM contestant_joins WHERE contestant_id={$id} LIMIT 10";
-		
+
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
@@ -120,7 +122,7 @@ while ($row=mysqli_fetch_row($result))
 							{$contest["name"]}
 						</span>
 						<div class=\"divTopBar\">
-						{$contest["start_time"]} | {$contest["end_time"]} | {$c_type} 
+						{$contest["start_time"]} | {$contest["end_time"]} | {$c_type}
 						</div>
 					</div>
 					</a>
@@ -134,9 +136,9 @@ while ($row=mysqli_fetch_row($result))
 			<tr>
 			<th>category</th>
 			<th>Number of problems</th>
-		
+
 			</tr>
-			<?php 
+			<?php
 				for ( $i=0 ; $i < $number ; $i++)
 				{
 					echo "<tr>";
@@ -152,7 +154,7 @@ while ($row=mysqli_fetch_row($result))
 
 <div id="chart_div" style="float: left; margin-top:50px;"></div>
 
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>    
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
 
       // Load the Visualization API and the piechart package.
@@ -170,15 +172,15 @@ while ($row=mysqli_fetch_row($result))
        // Create the data table.
       var data = new google.visualization.DataTable();
       data.addColumn('string', 'Contest');
-      data.addColumn('number', 'Rank');      
+      data.addColumn('number', 'Rank');
       var data_size				=<?php echo json_encode($size); ?>;
       var data_contests_names	=<?php echo json_encode(array_values($contests_names)); ?>;
-      var data_contestant_scores=<?php echo json_encode(array_values($contestant_score)); ?>;  
+      var data_contestant_scores=<?php echo json_encode(array_values($contestant_score)); ?>;
       document.getElementById("chart_div").innerHTML=data_size;
   	 var i=0;
-     for (;i<data_size;i++){     
+     for (;i<data_size;i++){
       	var data_array=[data_contests_names[i],Number(data_contestant_scores[i])];
-      	data.addRows([data_array]);      	
+      	data.addRows([data_array]);
       }
 
       // Set chart options
@@ -190,9 +192,9 @@ while ($row=mysqli_fetch_row($result))
       // Instantiate and draw our chart, passing in some options.
       var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
       chart.draw(data, options);
-    }       
+    }
     </script>
 
-<?php 
+<?php
 include("Footer.php");
 ?>
