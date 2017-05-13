@@ -2,16 +2,28 @@
 	include("Base.php");
 	require_once("includes/db_connection.php");
 
+function output()
+{
+	$output = [];
 	if(!isset($_GET["contest"]) || !is_numeric($_GET["contest"]))
-		redirect_to("index.php");
+	{
+		$output["redirect"] = "index.php";
+		return $output;
+	}
 
 	$contest = find_contest_by_id($_GET["contest"]);
 
-	if(!$contest)
-		redirect_to("index.php");
+	if(!$contest || !logged_in() || $_SESSION["id"] != $contest["judge_id"])
+	{
+		$output["redirect"] = "index.php";
+	}
 
-	if(!logged_in() || $_SESSION["id"] != $contest["judge_id"])
-		redirect_to("index.php");
+	return $output;
+}
+	$output = output();
+	if(isset($output["redirect"]))
+		redirect_to($output["redirect"]);
+	else {
 ?>
 
 <style type="text/css">
@@ -60,7 +72,7 @@
 		id = id + 1;
 	}
 	function add_category()
-	{	
+	{
 		if(id_categories >= 5)
 			return;
 
@@ -119,17 +131,17 @@
 						<option>10</option>
 						<option>11</option>
 					</select>
-					</td>					
+					</td>
 				</tr>
-				<tr>					
+				<tr>
 					<table id="category">
 						<tr>
 							<td> Problem Category 1</td>
 							<td><textarea rows="1" cols="30" name="categories[]"> </textarea></td>
-						</tr>						
+						</tr>
 
-					</table>					
-					<button type="button" style="margin-left: 50px;" onclick="add_category();">add category</button> 					
+					</table>
+					<button type="button" style="margin-left: 50px;" onclick="add_category();">add category</button>
 				</tr>
 				<br /><br />
 				<tr>
@@ -149,7 +161,4 @@
 		</form>
 	</div>
 </div>
-<?php include("Footer.php") ?>
-
-
-
+<?php include("Footer.php"); }?>

@@ -1,8 +1,24 @@
-<?php 
-	include("Base.php"); 
+<?php
+	include("Base.php");
 	require_once("includes/db_connection.php");
-	if(!logged_in())
+	function output()
+	{
+		$output = [];
+		if(!logged_in())
+		{
+			$output["redirect"] = "index.php";
+			return $output;
+		}
+
+		$output["compilers"] = get_all_compilers();
+		return $output;
+	}
+
+	$output = output();
+	if(isset($output["redirect"]))
 		redirect_to("index.php");
+	else {
+		$compilers = $output["compilers"];
 ?>
 
 <style type="text/css">
@@ -43,12 +59,10 @@
 					&nbsp;&nbsp;
 					<table>
 						<?php
-							$compilers = get_all_compilers();
-
 							foreach ($compilers as $compiler)
 							{ ?>
 								<tr>
-									<td> 
+									<td>
 									<?php echo $compiler["name"] . " " . $compiler["version"]; ?>
 									</td>
 									<td>
@@ -58,7 +72,7 @@
 						<?php
 							}
 						?>
-						
+
 					</table>
 				</td>
 			</tr>
@@ -67,4 +81,4 @@
 	</form>
 </div>
 
-<?php include("Footer.php"); ?>
+<?php include("Footer.php"); }?>

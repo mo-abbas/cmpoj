@@ -1,8 +1,8 @@
 <?php
 	function redirect_to($new_location)
 	{
-		header("Location: " . $new_location);
-		exit;
+		//header("Location: " . $new_location);
+		//exit;
 	}
 
 	function mysql_prep($string)
@@ -327,12 +327,12 @@
 		$result = mysqli_query($connection, $query);
 		confirm_query($result);
 
-		$compiler = mysqli_fetch_assoc($result);
+		$contestant_joins = mysqli_fetch_assoc($result);
 		mysqli_free_result($result);
 
-		if($compiler)
+		if($contestant_joins)
 		{
-			return $compiler;
+			return $contestant_joins;
 		}
 		else
 		{
@@ -674,7 +674,7 @@
 		global $connection;
 		$category = mysql_prep($id);
 
-		$query = "SELECT c.handle ,a.id ";
+		$query = "SELECT * ";
 		$query .= "FROM contestant c, account a ";
 		$query .= "WHERE  a.team_id ={$id}  AND a.id =c.id ;";
 		$result = mysqli_query($connection, $query);

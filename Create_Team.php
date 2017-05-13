@@ -1,8 +1,20 @@
-<?php 
-	include("Base.php"); 
+<?php
+	include("Base.php");
 	require_once("includes/db_connection.php");
-	if(!logged_in())
+
+	function output()
+	{
+		$output = [];
+		if(!logged_in())
+			$output["redirect"] = "index.php";
+
+		return $output;
+	}
+
+	$output = output();
+	if(isset($output["redirect"]))
 		redirect_to("index.php");
+	else {
 ?>
 
 <div id="rightPan">
@@ -39,4 +51,4 @@
 	</form>
 </div>
 
-<?php include("Footer.php"); ?>
+<?php include("Footer.php"); }?>

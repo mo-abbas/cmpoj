@@ -1,6 +1,25 @@
-<?php 
-	include("Base.php");	
+<?php
+	include("Base.php");
 	require_once("includes/db_connection.php");
+
+	function output()
+	{
+		$output = [];
+		global $connection;
+
+		$time = date("Y-m-d H:i:s");
+
+		$query  = "SELECT * ";
+		$query .= "FROM contest ";
+		$query .= "WHERE end_time > '{$time}' ";
+		$query .= "ORDER BY start_time ASC LIMIT 10";
+
+		$result = mysqli_query($connection, $query);
+		confirm_query($result);
+		return query_result_to_array($result);
+	}
+
+	$result_arr = output();
 	$message="";
 ?>
 <div id="rightPan">
@@ -11,26 +30,13 @@
 		echo message();
 	?>
 	<h2>Recent Contests</h2>
-<?php 
-	global $connection;
-
-	$time = date("Y-m-d H:i:s");
-
-	$query  = "SELECT * ";
-	$query .= "FROM contest ";
-	$query .= "WHERE end_time > '{$time}' ";
-	$query .= "ORDER BY start_time ASC LIMIT 10";
-	
-	$result = mysqli_query($connection, $query);
-	confirm_query($result);
-	$result_arr = query_result_to_array($result);
-	
+<?php
 	if (! empty($result_arr))
 		foreach($result_arr as $contest)
 		{
 			$c_type = $contest["type"] == 0 ? "Individual" : "Team";
 			$output_div= "
-			
+
 			<div class=\"itemDiv\">
 				<span class=\"divName\">
 					<a href=\"ContestProblems.php?contest={$contest["id"]}\" style=\"text-decoration:none; color:inherit;\">
@@ -39,9 +45,9 @@
 				</span>	<div class=\"divTopBar\">
 				{$contest["start_time"]} | {$contest["end_time"]} | {$c_type}<br/>
 				<br/><br/><br/>
-				
+
 				</div>
-			</div>				
+			</div>
 			";
 			echo $output_div;
 		}
@@ -53,6 +59,6 @@
 <script src='jQuery/StarRating/jquery.MetaData.js' type="text/javascript" language="javascript"></script>
 <script src='jQuery/StarRating/jquery.rating.js' type="text/javascript" language="javascript"></script>
 <link href='jQuery/StarRating/jquery.rating.css' type="text/css" rel="stylesheet"/>
-<?php 
+<?php
 include("Footer.php");
-?>	
+?>

@@ -31,19 +31,6 @@
 	{
 		$submissions = get_all_submissions_in_contest($contest["id"]);	//true is used to get pending submissions only
 	}
-
-	$page = 1;
-	if(isset($_GET["page"]) && is_numeric($_GET["page"]))
-		$page = (int)$_GET["page"];
-
-	$number = count($submissions);
-	$NoPages = ceil($number / 15);
-
-	if($page > $NoPages || $page < 1)
-		$page = 1;
-
-	$start = ($page - 1) * 15;
-	$end = min($number, $start + 15);
 ?>
 
 <style type="text/css">
@@ -137,63 +124,6 @@
 			?>
 		</table>
 
-	</div>
-	<div style="text-align: center; ">
-	<?php
-		$prev = $page - 1;
-		$next = $page + 1;
-		
-		if(!($page <= 1))
-		{
-			echo "<a href='?contest={$contest["id"]}";
-			if($problem)
-				echo "&problem={$problem["id"]}";
-			echo "&page=1'>First</a> ";
-
-			echo "<a href='?contest={$contest["id"]}";
-			if($problem)
-				echo "&problem={$problem["id"]}";
-			echo "&page={$prev}'>Prev</a> ";
-		}
-
-		if($page > 3)
-			echo ".. ";
-
-		if($NoPages >= 1 && $page <= $NoPages)
-		{
-		
-			for($x = max(1, $page - 2); $x <= min($NoPages, $page + 2); $x++)
-			{
-				if($x == $page)
-					echo "{$x} ";
-				else
-				{
-					echo "<a href=\"?contest={$contest["id"]}";
-					if($problem)
-						echo "&problem={$problem["id"]}";
-					echo "&page={$x}\">{$x}</a> ";
-				}
-			}
-		
-		}
-		
-		if($page + 2 < $NoPages)
-			echo ".. ";
-
-		if(!($page >= $NoPages))
-		{
-			echo "<a href='?contest={$contest["id"]}";
-			if($problem)
-				echo "&problem={$problem["id"]}";
-			echo "&page={$next}'>Next</a> ";
-
-			echo "<a href='?contest={$contest["id"]}";
-			if($problem)
-				echo "&problem={$problem["id"]}";
-			echo "&page={$NoPages}'>Last</a> ";
-		}
-		
-	?>
 	</div>
 </div>
 <?php include("Footer.php") ?>

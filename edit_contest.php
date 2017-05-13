@@ -2,16 +2,34 @@
 include ("Base.php");
 require_once("includes/db_connection.php");
 
-/*  check for judge */
+function output()
+{
+	$output = [];
+	if (!isset($_GET["contest"]))
+	{
+		$output["redirect"] = "index.php";
+		return $output;
+	}
 
-if (!isset($_GET["contest"]))
-	redirect_to("index.php");
+	$contest_id=$_GET["contest"];
+	$contest=find_contest_by_id($contest_id);
 
-$contest_id=$_GET["contest"];
-$contest=find_contest_by_id($contest_id);
+	if ($_SESSION["id"] != $contest["judge_id"])
+	{
+		$output["redirect"] = "index.php";
+		return $output;
+	}
 
-if ( $_SESSION["id"] != $contest["judge_id"] )
-	redirect_to("index.php");
+	$output["contest"] = $contest;
+	return $output;
+}
+
+$output = output();
+
+if (isset($output["redirect"]))
+	redirect_to($output["redirect"]);
+else {
+	$contest = $output["contest"];
 ?>
 
 
@@ -35,9 +53,10 @@ if ( $_SESSION["id"] != $contest["judge_id"] )
 			<tr>
 				<td>Contest ends</td>
 				<td><input type="datetime-local" name="contest_ends"  value="<?php echo $contest["end_time"] ?>"></td>
-			</tr>			
-						
-		</table>	
+			</tr>
+
+		</table>
 	<input type="submit" name="submit" value="Edit" style="margin: 30px 10em;"/>
 </form>
 </div>
+<?php include("Footer.php"); }?>

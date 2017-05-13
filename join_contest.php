@@ -1,80 +1,118 @@
-<?php 
-	include("Base.php"); 
+<?php
+	include("Base.php");
 	require_once("includes/db_connection.php");
-	if(!isset($_GET["contest"]) || !logged_in())
-		redirect_to("index.php");
 
-	$contest = find_contest_by_id($_GET["contest"]);
-	if(!$contest)
-		redirect_to("index.php");
-
-	if(isset($_POST["submit"]))
+	//inserts in team contest even if the contesant doesn't have a team
+	function output()
 	{
-		if($contest["type"] == 0)
+		$output = [];
+		if(!isset($_GET["contest"]) || !logged_in())
 		{
-	
-			$id = mysql_prep($_SESSION["id"]);
-
-			$query  = "SELECT * ";
-			$query .= "FROM contestant_joins ";
-			$query .= "WHERE contestant_id={$id} AND contest_id={$contest["id"]} ";
-			$query .= "LIMIT 1";
-
-			$result = mysqli_query($connection, $query);
-			confirm_query($result);
-
-			if ($team = mysqli_fetch_assoc($result)) 
-			{
-				$_SESSION["message"] = "You already joined this contest.";
-				redirect_to("ContestProblems.php?contest={$contest["id"]}");
-			}
-
-			$query  = "INSERT INTO ";
-			$query .= "contestant_joins ";
-			$query .= "(contestant_id, contest_id ";
-			$query .= ") VALUES (";
-			$query .= "{$id}, {$contest["id"]})";
-
-			$result = mysqli_query($connection, $query);
-			confirm_query($result);
-
-			$_SESSION["message"] = "You joined the contest successfully.";
-			redirect_to("ContestProblems.php?contest={$contest["id"]}");
+			$output["redirect"] = "index.php";
+			return $output;
 		}
-		else
+
+		$contest = find_contest_by_id($_GET["contest"]);
+		if(!$contest)
 		{
-			if($_SESSION["team_id"] == 0)
-				$error[] = "You must be in a team to join this contest.";
+			$output["redirect"] = "index.php";
+			return $output;
+		}
 
-			$id = mysql_prep($_SESSION["team_id"]);
+		$output["contest"] = $contest;
+		$output["showSubmit"] = $contest["type"] == 0 || $_SESSION["team_id"] != 0;
+		$output["inTeam"] = $_SESSION["team_id"] != 0;
+		return $output;
+	}
 
-			$query  = "SELECT * ";
-			$query .= "FROM contestant_joins ";
-			$query .= "WHERE contestant_id={$id} AND contest_id={$contest["id"]} ";
-			$query .= "LIMIT 1";
+	function post($contest)
+	{
+		global $connection;
+		global $error;
 
-			$result = mysqli_query($connection, $query);
-			confirm_query($result);
-
-			if ($team = mysqli_fetch_assoc($result)) 
+		if(isset($_POST["submit"]))
+		{
+			if($contest["type"] == 0)
 			{
-				$_SESSION["message"] = "You already joined this contest.";
+
+				$id = mysql_prep($_SESSION["id"]);
+
+				$query  = "SELECT * ";
+				$query .= "FROM contestant_joins ";
+				$query .= "WHERE contestant_id={$id} AND contest_id={$contest["id"]} ";
+				$query .= "LIMIT 1";
+
+				$result = mysqli_query($connection, $query);
+				confirm_query($result);
+
+				if ($team = mysqli_fetch_assoc($result))
+				{
+					$_SESSION["message"] = "You already joined this contest.";
+					redirect_to("ContestProblems.php?contest={$contest["id"]}");
+					return;
+				}
+
+				$query  = "INSERT INTO ";
+				$query .= "contestant_joins ";
+				$query .= "(contestant_id, contest_id ";
+				$query .= ") VALUES (";
+				$query .= "{$id}, {$contest["id"]})";
+
+				$result = mysqli_query($connection, $query);
+				confirm_query($result);
+
+				$_SESSION["message"] = "You joined the contest successfully.";
 				redirect_to("ContestProblems.php?contest={$contest["id"]}");
 			}
+			else
+			{
+				if($_SESSION["team_id"] == 0)
+				{
+					$error[] = "You must be in a team to join this contest.";
+					return;
+				}
 
-			$query  = "INSERT INTO ";
-			$query .= "contestant_joins ";
-			$query .= "(contestant_id, contest_id ";
-			$query .= ") VALUES (";
-			$query .= "{$id}, {$contest["id"]})";
+				$id = mysql_prep($_SESSION["team_id"]);
 
-			$result = mysqli_query($connection, $query);
-			confirm_query($result);
+				$query  = "SELECT * ";
+				$query .= "FROM contestant_joins ";
+				$query .= "WHERE contestant_id={$id} AND contest_id={$contest["id"]} ";
+				$query .= "LIMIT 1";
 
-			$_SESSION["message"] = "You joined the contest successfully.";
-			redirect_to("ContestProblems.php?contest={$contest["id"]}");
+				$result = mysqli_query($connection, $query);
+				confirm_query($result);
+
+				if ($team = mysqli_fetch_assoc($result))
+				{
+					$_SESSION["message"] = "You already joined this contest.";
+					redirect_to("ContestProblems.php?contest={$contest["id"]}");
+					return;
+				}
+
+				$query  = "INSERT INTO ";
+				$query .= "contestant_joins ";
+				$query .= "(contestant_id, contest_id ";
+				$query .= ") VALUES (";
+				$query .= "{$id}, {$contest["id"]})";
+
+				$result = mysqli_query($connection, $query);
+				confirm_query($result);
+
+				$_SESSION["message"] = "You joined the contest successfully.";
+				redirect_to("ContestProblems.php?contest={$contest["id"]}");
+			}
 		}
 	}
+
+	$output = output();
+	if(isset($output["redirect"]))
+		redirect_to($output["redirect"]);
+	else {
+		$contest = $output["contest"];
+		$inTeam = output["inTeam"];
+		$showSubmit = output["showSubmit"];
+
+		post($contest);
 ?>
 
 <style type="text/css">
@@ -111,12 +149,12 @@
 			<br/>
 			<tr>
 				<td>
-					<?php 
+					<?php
 						if($contest["type"] == 0)
 							echo "<h3>Join the contest as Individual.</h3>";
 						else
 						{
-							if($_SESSION["team_id"] != 0)
+							if($inTeam)
 								echo "<h3>Join the contest as " . $_SESSION["team_handle"] . "</h3>";
 							else
 								echo "<h3>You must be in a team to join this contest.</h3>";
@@ -124,8 +162,8 @@
 					?>
 				</td>
 				<td>
-					<?php 
-						if($contest["type"] == 0 || $_SESSION["team_id"] != 0)
+					<?php
+						if($showSubmit)
 							echo "<input type=\"submit\" name=\"submit\" value=\"Join\" style=\"margin: 30px 10em;\"/>";
 					?>
 				</td>
@@ -134,4 +172,4 @@
 	</form>
 </div>
 
-<?php include("Footer.php"); ?>
+<?php include("Footer.php"); }?>

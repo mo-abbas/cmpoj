@@ -26,6 +26,7 @@ include("Base.php");
 		</form>
 	<div class="tfclear"></div>
 </div>
+</div>
 
 
 

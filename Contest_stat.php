@@ -1,23 +1,25 @@
 <?php
 		include("Base.php");
 		require_once("includes/db_connection.php");
-		$id=$_GET["problem"];
+		$id=$_GET["contest"];
 		$Accepted = get_stat_problem_in_contest($id,"Accepted");
 		$wrong_Answer = get_stat_problem_in_contest($id,"Wrong Answer");
-		$pending = get_stat_problem_in_contest($id,"pending");
+		$pending = get_stat_problem_in_contest($id," Pending");
 		$Time_limit = get_stat_problem_in_contest($id,"Time limit exceeded");
 		$compile_error = get_stat_problem_in_contest($id,"Compile error");
-		
+		$Runtime_error = get_stat_problem_in_contest($id,"Runtime error");
+
 		$Accepted_no = count($Accepted);
 		$wrong_Answer_no = count($wrong_Answer);
 		$pending_no = count($pending);
 		$Time_limit_no = count($Time_limit);
 		$compile_error_no = count($compile_error);
-		
+		$Runtime_error_no = count($Runtime_error);
+
 		$stat = $Accepted_no +$wrong_Answer_no +$pending_no +$Time_limit_no+$compile_error_no ;
 		if(! $stat)
 			echo "No Statistics Availble ";
-		
+
 ?>
 <html>
   <head>

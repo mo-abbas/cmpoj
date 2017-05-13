@@ -1,5 +1,6 @@
 {
     "require-dev": {
-        "phpunit/dbunit": "^2.0"
+        "phpunit/dbunit": "^2.0",
+		"phpunit/phpunit-selenium": ">=1.2"
     }
 }
