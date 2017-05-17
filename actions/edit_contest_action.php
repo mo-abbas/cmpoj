@@ -1,42 +1,60 @@
-<?php 
+<?php
 require_once("../includes/session.php");
 require_once("../includes/db_connection.php");
 require_once("../includes/functions.php");
 require_once("../includes/validation_functions.php");
 
-if(!isset($_POST["submit"])||!logged_in())
-	redirect_to("../index.php");
+// no check on the judge or if the contest exists
 
-if (!isset($_GET["contest"]))
-	redirect_to("../index.php");
+function output()
+{
+	global $connection;
 
-$contest=find_contest_by_id($_GET["contest"]);
+	$output = [];
+	if(!isset($_POST["submit"]))
+	{
+		$output["redirect"] = "../index.php";
+		return $output;
+	}
 
-$nName=$_POST["contest_name"];
-$nStartD=$_POST["contest_starts"];
-$nEndD=$_POST["contest_ends"];
+	if(!logged_in())
+	{
+		$output["redirect"] = "../index.php";
+		return $output;
+	}
 
-$id = mysql_prep($_GET["contest"]);
+	$contest=find_contest_by_id($_GET["contest"]);
+	if(!$contest)
+	{
+		$output["redirect"] = "../index.php";
+		return $output;
+	}
 
-$query = " UPDATE contest";
-$query.= " SET name=\"{$nName}\",";
-$query.= " start_time=\"{$nStartD}\",";
-$query.= " end_time=\"{$nEndD}\"";
-$query.= " WHERE id=\"{$id}\";" ;
+	if($contest["judge_id"] != $_SESSION["id"])
+	{
+		$output["redirect"] = "../index.php";
+		return $output;
+	}
+
+	$id = mysql_prep($_GET["contest"]);
+	$nName = mysql_prep($_POST["contest_name"]);
+	$nStartD = mysql_prep($_POST["contest_starts"]);
+	$nEndD = mysql_prep($_POST["contest_ends"]);
+
+	$query = " UPDATE contest";
+	$query.= " SET name=\"{$nName}\",";
+	$query.= " start_time=\"{$nStartD}\",";
+	$query.= " end_time=\"{$nEndD}\"";
+	$query.= " WHERE id=\"{$id}\";" ;
 
 
-$result=mysqli_query($connection, $query);
-confirm_query($result);
+	$result=mysqli_query($connection, $query);
+	confirm_query($result);
 
+	$output["redirect"] = "../edit_contest.php?contest={$_GET["contest"]}";
+	return $output;
+}
 
-
-
-if(empty($errors))
-	$_SESSION["message"] = "Contest edited successfully.";
-else
-	$_SESSION["errors"] = $errors;	
-
-$id=$_GET["contest"];
-redirect_to( "../edit_contest.php?contest={$id}");
-
+$output = output();
+redirect_to($output["redirect"]);
 ?>

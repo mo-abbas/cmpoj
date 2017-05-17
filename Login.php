@@ -9,6 +9,7 @@ $handle = "";
 
 function output()
 {
+	global $connection;
 	$dest = "index.php";
 
 	$output = [];

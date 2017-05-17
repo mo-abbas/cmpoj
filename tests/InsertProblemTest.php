@@ -74,7 +74,7 @@ class InsertProblemTest extends TestCase
     $_GET["contest"] = 13;
     $_SESSION["id"] = 21;
     $output = output();
-    $this->assertEmpty($output);
+    $this->assertArrayHasKey("contest", $output);
 	}
 }
 ?>

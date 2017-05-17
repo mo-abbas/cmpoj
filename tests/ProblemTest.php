@@ -87,7 +87,7 @@ class AccountTest extends TestCase
 	{
 		$level = 1;
 		$problems = get_problem_by_level($level);
-		$this->assertCount(8, $problems);
+		$this->assertCount(9, $problems);
 	}
 
 	public function test_get_problem_by_category()

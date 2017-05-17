@@ -18,12 +18,14 @@ function output()
 		$output["redirect"] = "index.php";
 	}
 
+	$output["contest"] = $contest;
 	return $output;
 }
 	$output = output();
 	if(isset($output["redirect"]))
 		redirect_to($output["redirect"]);
 	else {
+		$contest = $output["contest"];
 ?>
 
 <style type="text/css">

@@ -3,7 +3,7 @@
 use PHPUnit\Framework\TestCase;
 require_once("../includes/session.php");
 
-class ContestsTest extends TestCase
+class DeleteTeamTest extends TestCase
 {
 	private static $connection = null;
 	public static function setUpBeforeClass()
@@ -47,13 +47,40 @@ class ContestsTest extends TestCase
 		mysqli_query(self::$connection, "ROLLBACK");
 	}
 
-	public function test_Contests()
-	{
-		require("../Contests.php");
+  public function test_delete_team()
+  {
+    require("../actions/delete_team.php");
+
+    // not logged in
+    output();
+    $this->assertEquals("../index.php", $output["redirect"]);
+
+		//logged in, no team
+		$_SESSION["id"] = 33;
+		output();
+		$this->assertEquals("../index.php", $output["redirect"]);
+
+    //invalid team
+    $_SESSION["id"] = 33;
+		$_GET["team"] = 1;
     $output = output();
-    $expected = [["id"=>13], ["id"=>20], ["id"=>21], ["id"=>22], ["id"=>26]];
-    $this->assertCount(5, $output);
-    $this->assertArraySubset($expected, $output);
-	}
+    $this->assertEquals("../index.php", $output["redirect"]);
+
+		// not the coach
+		$_SESSION["id"] = 21;
+		$_GET["team"] = 37;
+		$output = output();
+		$team = find_team_by_id($_GET["team"]);
+		$this->assertEquals(33, $team["coach_id"]);
+		$this->assertEquals("../index.php", $output["redirect"]);
+
+    //succesfull delete
+		$_SESSION["id"] = 33;
+		$_GET["team"] = 37;
+		$output = output();
+		$team = find_team_by_id($_GET["team"]);
+		$this->assertNull($team);
+		$this->assertEquals("../CoachedTeams.php", $output["redirect"]);
+  }
 }
 ?>

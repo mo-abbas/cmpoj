@@ -62,22 +62,22 @@ class ContestProblemsTest extends TestCase
     $this->assertArrayHasKey("redirect", $output);
 
     // not logged in, contest_time > time, !judge, !showProblems
-    $_GET["contest"] = 22;
+    $_GET["contest"] = 26;
     $output = output();
 		$this->assertFalse($output["judge"]);
     $this->assertFalse($output["showContest"]);
     $this->assertFalse($output["showProblems"]);
-    $this->assertEquals($output["contest"]["id"], 22);
+    $this->assertEquals($output["contest"]["id"], 26);
     $this->assertEquals($output["contest"]["name"], "contest21");
 
     // judge, logged_in
-    $_GET["contest"] = 22;
+    $_GET["contest"] = 26;
     $_SESSION["id"] = 27;
     $output = output();
 		$this->assertTrue($output["judge"]);
     $this->assertTrue($output["showContest"]);
     $this->assertFalse($output["showProblems"]);
-    $this->assertEquals($output["contest"]["id"], 22);
+    $this->assertEquals($output["contest"]["id"], 26);
     $this->assertEquals($output["contest"]["name"], "contest21");
 
 		// logged in, not joined
