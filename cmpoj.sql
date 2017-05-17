@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 06, 2017 at 03:57 PM
+-- Generation Time: May 17, 2017 at 03:59 PM
 -- Server version: 5.7.14
 -- PHP Version: 5.6.25
 
@@ -41,7 +41,7 @@ CREATE TABLE `account` (
 
 INSERT INTO `account` (`id`, `first_name`, `last_name`, `password`, `email`, `team_id`) VALUES
 (21, 'Mohamed', 'Abbas', '$2y$10$NmM3ZDQ5MzJlMTY2OGZhMeFGvPFfPz0eRs5QsdkwSTYKHe5PPpeui', 'mamaams@gmail.com', NULL),
-(22, 'Mohamed', 'Abbas', '$2y$10$OWI1ZTRmYmU2ZjIxYTRkM.AhzngszY8pE39vsXGjiZYIxWF0TdDUO', 'mohamed@gmail.com', NULL),
+(22, 'Mohamed', 'Abbas', '$2y$10$OWI1ZTRmYmU2ZjIxYTRkM.AhzngszY8pE39vsXGjiZYIxWF0TdDUO', 'mohamed@gmail.com', 37),
 (23, 'Mohamed', 'Abbas', '$2y$10$YTc4YzkwZjE3Mjk4OGNjMuaZNM6kerdYn0kMgQv5sAxUZezpcuf4i', 'mamaams@gmail.net', NULL),
 (24, 'Ahmed', 'Ali', '$2y$10$OWNlZDY2NWVkNzdiYmI3M.sYZV.bnwIbcj7p4fS4p91ty1G/ZAHC2', 'test1@gmail.com', NULL),
 (25, 'Youssef', 'Hamdy', '$2y$10$Y2E4N2I0Njc5MGNkNTliYek6NOhBryuJpD6a6nKDGHcImBZsrriRS', 'test2@gmail.com', NULL),
@@ -49,10 +49,10 @@ INSERT INTO `account` (`id`, `first_name`, `last_name`, `password`, `email`, `te
 (27, 'Aya', 'Hassan', '$2y$10$ODZlMjg0YjEzYWExZjUxMuchbfthmdVNBmaGbtQfmeHhS1EC4ZWGO', 'test4@a.com', NULL),
 (28, 'Alaa', 'Ahmed', '$2y$10$Zjk2MGNiYjczMWQ1MjkxMegH9G6QlYGHrRuuyz5KXW83bexPBPlQy', 'test5@gmail.com', NULL),
 (29, 'Ahmed', 'Refaat', '$2y$10$MjJjZmM4ZDdiZWZjM2MzOOxO/wCrd0foaCT0UbxeOlSFxUXMvDg1e', 'test6@gmail.com', NULL),
-(32, 'Omar', 'Ahmed', '$2y$10$YzBhY2E2NDRkNWJjMDgyYOsaW09THIzWA08Zsaqy/9cq7A6zG5HBS', 'whatever@whatever.whatever', NULL),
+(32, 'Omar', 'Ahmed', '$2y$10$YzBhY2E2NDRkNWJjMDgyYOsaW09THIzWA08Zsaqy/9cq7A6zG5HBS', 'whatever@whatever.whatever', 37),
 (33, 'Ali', 'Hussein', '$2y$10$YTBkMmFkNzMzZjc0NGQzN.a/MymeYUjytD5l3M5YlB06sr6jRK5eq', 'ali@whatever.com', NULL),
-(35, 'asdasd', 'asdasd', '$2y$10$YzFmM2NhMGI3MjZmNjVlYuVKUIyQ/svHwT1rF1reQIMOXKrZgL0ai', 'sadkjfhk@kfjgkd.com', NULL),
-(36, 'asad', 'asad', '$2y$10$NGQzYTMxMWQwNTExMzIwO.ZWHVDeKtRYAMuTGWnrjCqubdPQXeM3e', 'a@a.com', NULL);
+(35, 'asdasd', 'asdasd', '$2y$10$YzFmM2NhMGI3MjZmNjVlYuVKUIyQ/svHwT1rF1reQIMOXKrZgL0ai', 'sadkjfhk@kfjgkd.com', 37),
+(36, 'asad', 'asad', '$2y$10$NGQzYTMxMWQwNTExMzIwO.ZWHVDeKtRYAMuTGWnrjCqubdPQXeM3e', 'a@a.com', 37);
 
 -- --------------------------------------------------------
 
@@ -131,8 +131,10 @@ INSERT INTO `contest` (`id`, `name`, `start_time`, `end_time`, `type`, `judge_id
 (15, 'Team contest', '2015-01-09 04:28:00', '2016-01-01 01:00:00', 1, 21),
 (18, 'contest 1', '2015-01-11 17:19:00', '2015-01-15 17:19:00', 0, 21),
 (19, 'contest 2', '2015-01-11 17:19:00', '2015-01-15 17:19:00', 0, 21),
-(20, 'contest21', '2015-01-21 01:01:00', '2015-01-22 01:01:00', 1, 27),
-(21, 'asdas', '2017-12-30 12:59:00', '2017-12-31 12:59:00', 1, 36);
+(20, 'contest21', '2017-01-21 01:01:00', '2018-01-22 01:01:00', 1, 27),
+(21, 'asdas', '2017-01-30 12:59:00', '2017-12-31 12:59:00', 1, 36),
+(22, 'contest21', '2017-10-21 01:01:00', '2018-01-22 01:01:00', 1, 27),
+(26, 'contest21', '2017-10-21 01:01:00', '2018-01-22 01:01:00', 1, 27);
 
 -- --------------------------------------------------------
 
@@ -165,7 +167,8 @@ INSERT INTO `contestant` (`id`, `handle`) VALUES
 (26, 'test3'),
 (27, 'test4'),
 (28, 'test5'),
-(29, 'test6');
+(29, 'test6'),
+(37, 'Testers');
 
 -- --------------------------------------------------------
 
@@ -189,10 +192,7 @@ INSERT INTO `contestant_joins` (`contestant_id`, `contest_id`, `rank`, `score`, 
 (22, 13, 2, 142, 2),
 (23, 13, 1, 130, 2),
 (25, 13, 7, 0, 0),
-(30, 15, 4, 19, 1),
-(31, 15, 5, 52, 1),
-(33, 13, 3, 7490, 2),
-(34, 15, 6, 3678, 1);
+(33, 13, 3, 7490, 2);
 
 -- --------------------------------------------------------
 
@@ -213,15 +213,16 @@ CREATE TABLE `problem` (
 --
 
 INSERT INTO `problem` (`id`, `title`, `level`, `text`, `contest_id`) VALUES
-(10, 'Problem 1', 1, 'This is a test problem, just print out "Hello" without quotes for the correct answer.\r\nTHERE IS NO INPUT FOR THIS PROBLEM..', 13),
-(11, 'Problem 2', 4, 'In this problem we want the number of zeros that end factorial of a specific number.\r\nFor example:\r\nfactorial(5) = 20 and it has 1 zero at the right.\r\n\r\nThe input will start with a number \'t\' that represents number of test cases.\r\nFollowing there are t lines each line has a number a (1 <= a <= 10^9)\r\n\r\noutput each test case on a separate line.', 13),
+(10, 'Problem 1', 1, 'This is a test problem, just print out "Hello" without quotes for the correct answer.\n\nTHERE IS NO INPUT FOR THIS PROBLEM..', 13),
+(11, 'Problem 2', 4, 'In this problem we want the number of zeros that end factorial of a specific number.\n\nFor example:\n\nfactorial(5) = 20 and it has 1 zero at the right.\n\n\n\nThe input will start with a number \'t\' that represents number of test cases.\n\nFollowing there are t lines each line has a number a (1 <= a <= 10^9)\n\n\n\noutput each test case on a separate line.', 13),
 (12, 'test', 1, 'asd ', 14),
 (13, 'test 1', 1, 'asdasd ', 15),
 (18, 'problem 1', 1, 'test for problem ', 18),
 (19, 'Problem 2', 1, 'test for another problem ', 18),
 (20, 'Problem 2', 1, 'test for another problem ', 19),
 (21, 'problem 1', 1, 'test for problem ', 19),
-(22, 'one one', 1, ' one oneone oneone one', 21);
+(22, 'one one', 1, ' one oneone oneone one', 21),
+(23, 'one one', 1, ' one oneone oneone one', 22);
 
 -- --------------------------------------------------------
 
@@ -266,8 +267,8 @@ CREATE TABLE `samples` (
 
 INSERT INTO `samples` (`problem_id`, `input`, `output`, `id`) VALUES
 (10, '*No Input*', 'Hello', 13),
-(11, '1\r\n5', '1', 14),
-(11, '1\r\n4', '0', 15),
+(11, '1\n\n5', '1', 14),
+(11, '1\n\n4', '0', 15),
 (12, ' asd', ' asd', 16),
 (13, 'asd ', ' asd', 17),
 (18, '1234 ', '1234 ', 18),
@@ -298,10 +299,7 @@ INSERT INTO `solves` (`problem_id`, `contestant_id`, `ac_time`, `submission_num`
 (10, 33, '2015-01-11 17:27:46', 1),
 (11, 22, '2015-01-09 04:14:56', 1),
 (11, 23, '2015-01-09 04:19:39', 1),
-(11, 33, '2015-01-11 17:31:19', 2),
-(13, 30, '2015-01-09 04:47:09', 1),
-(13, 31, '2015-01-09 04:40:04', 3),
-(13, 34, '2015-01-11 17:46:27', 1);
+(11, 33, '2015-01-11 17:31:19', 2);
 
 -- --------------------------------------------------------
 
@@ -324,10 +322,10 @@ CREATE TABLE `submission` (
 --
 
 INSERT INTO `submission` (`id`, `status`, `time`, `code`, `compiler_id`, `contestant_id`, `problem_id`) VALUES
-(374, 'Compile error', '2015-01-09 03:54:50', '#include <iostream>\r\n#include <string>\r\n\r\nusing namespace std;\r\n\r\nint main()\r\n{\r\n	cout << "Hello" << endl\r\n	return 0;\r\n}', 1, 22, 10),
-(375, 'Wrong answer', '2015-01-09 03:54:59', '#include <iostream>\r\n#include <string>\r\n\r\nusing namespace std;\r\n\r\nint main()\r\n{\r\n	cout << " Hello" << endl;\r\n	return 0;\r\n}', 1, 22, 10),
-(376, 'Accepted', '2015-01-09 03:55:06', '#include <iostream>\r\n#include <string>\r\n\r\nusing namespace std;\r\n\r\nint main()\r\n{\r\n	cout << "Hello" << endl;\r\n	return 0;\r\n}', 1, 22, 10),
-(377, 'Wrong Answer', '2015-01-09 03:59:46', '#include <iostream>\r\n\r\n//I don\'t actually remember the solution for this problem so I\'ll consider it accepted anyway :D\r\n\r\nusing namespace std;\r\n\r\nint main()\r\n{\r\n	int t;\r\n	cin >> t;\r\n	long long answer;\r\n	while(t--)\r\n	{\r\n		cout << answer << endl;\r\n	}\r\n	return 0;\r\n}', 1, 22, 11),
+(374, 'Compile error', '2015-01-09 03:54:50', '#include <iostream>\n\n#include <string>\n\n\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n	cout << "Hello" << endl\n\n	return 0;\n\n}', 1, 22, 10),
+(375, 'Wrong answer', '2015-01-09 03:54:59', '#include <iostream>\n\n#include <string>\n\n\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n	cout << " Hello" << endl;\n\n	return 0;\n\n}', 1, 22, 10),
+(376, 'Accepted', '2015-01-09 03:55:06', '#include <iostream>\n\n#include <string>\n\n\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n	cout << "Hello" << endl;\n\n	return 0;\n\n}', 1, 22, 10),
+(377, 'Wrong Answer', '2015-01-09 03:59:46', '#include <iostream>\n\n\n\n//I don\'t actually remember the solution for this problem so I\'ll consider it accepted anyway :D\n\n\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n	int t;\n\n	cin >> t;\n\n	long long answer;\n\n	while(t--)\n\n	{\n\n		cout << answer << endl;\n\n	}\n\n	return 0;\n\n}', 1, 22, 11),
 (381, 'Accepted', '2015-01-09 04:19:28', 'a', 1, 23, 10),
 (382, 'Accepted', '2015-01-09 04:19:39', 'b', 1, 23, 11),
 (384, 'Wrong answer', '2015-01-09 04:36:06', 'asd', 1, 31, 13),
@@ -335,80 +333,11 @@ INSERT INTO `submission` (`id`, `status`, `time`, `code`, `compiler_id`, `contes
 (386, 'Accepted', '2015-01-09 04:40:04', 'asd', 1, 31, 13),
 (387, 'Accepted', '2015-01-09 04:47:09', '123', 1, 30, 13),
 (388, ' Pending', '2015-01-09 05:06:33', 'sad', 1, 23, 10),
-(389, 'Runtime error', '2015-01-09 19:17:25', '#include <ioaksfhosdfg\r\ndfglksdfjg;sdfgsdfg\r\ndf\r\ndfg\r\nld;sfg', 1, 25, 10),
-(390, 'Accepted', '2015-01-11 17:27:46', '#include <iostream>\r\nusing namespace std;\r\n\r\nint main()\r\n{\r\n	return 0;\r\n}', 1, 33, 10),
+(389, 'Runtime error', '2015-01-09 19:17:25', '#include <ioaksfhosdfg\n\ndfglksdfjg;sdfgsdfg\n\ndf\n\ndfg\n\nld;sfg', 1, 25, 10),
+(390, 'Accepted', '2015-01-11 17:27:46', '#include <iostream>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n	return 0;\n\n}', 1, 33, 10),
 (391, 'Compile error', '2015-01-11 17:31:06', 'klsdjnfksd', 1, 33, 11),
 (392, 'Accepted', '2015-01-11 17:31:19', 'dfmsdmf.,', 1, 33, 11),
 (393, 'Accepted', '2015-01-11 17:46:27', 'asndm,fn ', 1, 34, 13);
-
---
--- Triggers `submission`
---
-DELIMITER $$
-CREATE TRIGGER `add_submission` AFTER INSERT ON `submission` FOR EACH ROW BEGIN 
-	IF NOT EXISTS (
-        	SELECT ac_time 
-            FROM solves 
-            WHERE solves.contestant_id=NEW.contestant_id 
-            AND solves.problem_id=NEW.problem_id
-        ) THEN
-		INSERT INTO solves 
-		(problem_id, contestant_id)
-		VALUES
-		(NEW.problem_id, NEW.contestant_id);
-	END IF;
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `judge_submission` AFTER UPDATE ON `submission` FOR EACH ROW BEGIN
-
-DECLARE a_contest_time datetime;
-DECLARE a_contest_id integer;
-DECLARE a_no_subm integer;
-DECLARE a_acc_time datetime;
-DECLARE a_time integer;
-
-SELECT submission_num, ac_time
-INTO a_no_subm, a_acc_time
-FROM solves WHERE NEW.contestant_id=solves.contestant_id AND NEW.problem_id=solves.problem_id;
-
-IF a_acc_time='1000-01-01 00:00:00' THEN
-	UPDATE solves 
-	SET solves.submission_num=solves.submission_num+1 
-	WHERE NEW.contestant_id=solves.contestant_id
-    AND NEW.problem_id=solves.problem_id;
-END IF;
-    
-IF NEW.status='Accepted' AND a_acc_time='1000-01-01 00:00:00' THEN
-
-	UPDATE solves SET ac_time=NEW.time WHERE
-		solves.contestant_id=NEW.contestant_id AND 
-    	solves.problem_id=NEW.problem_id; 
-        
-    SELECT contest_id 
-    INTO a_contest_id 
-    FROM problem WHERE
-    problem.id = NEW.problem_id;
-        
-    SELECT start_time 
-    INTO a_contest_time
-    FROM contest 
-    WHERE contest.id=a_contest_id;
-    
-    SELECT TIMESTAMPDIFF(MINUTE,a_contest_time, NEW.time)
-    INTO a_time;
-    
-    UPDATE contestant_joins SET score=(score+20*(a_no_subm)+a_time), acc_problems=acc_problems+1 WHERE
-    	contest_id=a_contest_id AND contestant_id=NEW.contestant_id;
-       
-    SET @a_rank=0;
-    UPDATE contestant_joins SET rank=@a_rank:=(@a_rank+1) ORDER BY acc_problems DESC, score ASC;
-    
-END IF;
-END
-$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -420,6 +349,13 @@ CREATE TABLE `team` (
   `id` int(12) NOT NULL,
   `coach_id` int(12) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `team`
+--
+
+INSERT INTO `team` (`id`, `coach_id`) VALUES
+(37, 33);
 
 --
 -- Indexes for dumped tables
@@ -523,27 +459,27 @@ ALTER TABLE `compiler`
 -- AUTO_INCREMENT for table `contest`
 --
 ALTER TABLE `contest`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 --
 -- AUTO_INCREMENT for table `contestant`
 --
 ALTER TABLE `contestant`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 --
 -- AUTO_INCREMENT for table `problem`
 --
 ALTER TABLE `problem`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 --
 -- AUTO_INCREMENT for table `samples`
 --
 ALTER TABLE `samples`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 --
 -- AUTO_INCREMENT for table `submission`
 --
 ALTER TABLE `submission`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=394;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=401;
 --
 -- Constraints for dumped tables
 --
